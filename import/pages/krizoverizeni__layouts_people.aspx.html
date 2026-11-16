@@ -1,0 +1,771 @@
+<HTML dir="ltr">
+<HEAD><meta name="GENERATOR" content="Microsoft SharePoint" /><meta name="progid" content="SharePoint.WebPartPage.Document" /><meta HTTP-EQUIV="Content-Type" content="text/html; charset=utf-8" /><meta HTTP-EQUIV="Expires" content="0" /><META NAME="ROBOTS" CONTENT="NOHTMLINDEX"/><title>
+	
+	Osoby a skupiny
+
+</title><link rel="stylesheet" type="text/css" href="/_layouts/1029/styles/core.css?rev=pkS%2FF9TH6vOPeNHO466yQw%3D%3D"/>
+<script type="text/javascript" language="javascript" src="/_layouts/1029/init.js?rev=Z4rrCDvlkNfJeR0Btjh3FQ%3D%3D"></script>
+<script type="text/javascript" language="javascript" src="/_layouts/1029/core.js?rev=d2Gr7b8OYUxICpJz2jjuhg%3D%3D"></script>
+<link type="text/xml" rel="alternate" href="/krizoverizeni/_vti_bin/spdisco.aspx" />
+	
+	<script language="javascript">
+	var currentViewId = '{C20A67E2-5BF0-4E97-A074-ECA8AB9A1B49}';
+	function NavigateToView(viewId)
+	{
+		var url = window.location.href + "";
+		url = StURLSetVar2(url, "View", viewId);
+		STSNavigate(url);
+	}
+	var noUserSelectedMsg = "Nevybrali jste \u017E\u00E1dn\u00E9 u\u017Eivatele.";
+	var noUserEmailSelectedMsg = "Nebyla zji\u0161t\u011Bna \u017E\u00E1dn\u00E1 e-mailov\u00E1 adresa. Bu\u010F nebyl vybr\u00E1n \u017E\u00E1dn\u00FD u\u017Eivatel, nebo k vybran\u00FDm u\u017Eivatel\u016Fm nejsou p\u0159idru\u017Eeny e-mailov\u00E9 adresy. Mus\u00EDte vybrat u\u017Eivatele a ov\u011B\u0159it, zda k n\u011Bmu je p\u0159idru\u017Eena e-mailov\u00E1 adresa.";
+	var noUserCallSelectedMsg = "Nebyla zji\u0161t\u011Bna \u017E\u00E1dn\u00E1 adresa SIP. Bu\u010F nebyl vybr\u00E1n \u017E\u00E1dn\u00FD u\u017Eivatel, nebo k vybran\u00FDm u\u017Eivatel\u016Fm nejsou p\u0159idru\u017Eeny adresy IP. Mus\u00EDte vybrat u\u017Eivatele a ov\u011B\u0159it, zda k n\u011Bmu je p\u0159idru\u017Eena adresa SIP.";
+	function GetSelectedUsers(viewId, attributeName, separator)
+	{
+		var result = "";
+		var viewCounter = g_ViewIdToViewCounterMap[viewId];
+		if (viewCounter == null)
+			return result;
+		var name = "spUserSelectionCheckBox_" + viewCounter.toString();
+		var users = document.getElementsByName(name);
+		for (var i = 0; i < users.length; i++)
+		{
+			var chkBox = users[i];
+			if (chkBox.checked)
+			{
+				var attributeValue = chkBox.getAttribute(attributeName);
+				if (attributeValue != null && attributeValue.length > 0)
+				{
+					if (result.length > 0)
+					{
+						result = result + separator;
+					}
+					result += attributeValue;
+				}
+			}
+		}
+		return result;
+	}
+	function BtnEmailClick(viewId)
+	{
+		var emails = GetSelectedUsers(viewId, "email", ";");
+		if (emails.length == 0)
+		{
+			alert(noUserEmailSelectedMsg);
+			return false;
+		}
+		emails = "mailto:" + escapeProperly(emails);
+		window.location = emails;
+		return false;
+	}
+	function BtnCallClick(viewId)
+	{
+		var result = "";
+		var viewCounter = g_ViewIdToViewCounterMap[viewId];
+		if (viewCounter == null)
+			return;
+		var name = "spUserSelectionCheckBox_" + viewCounter.toString();
+		var users = document.getElementsByName(name);
+		var attributeName = "sip";
+		var nSelectedCount = 0;
+		var firstSelected = "";
+		for (var i = 0; i < users.length; i++)
+		{
+			var chkBox = users[i];
+			if (chkBox.checked)
+			{
+				var attributeValue = chkBox.getAttribute(attributeName);
+				if (attributeValue != null && attributeValue.length > 0)
+				{
+					result += "<sip:" + attributeValue + ">";
+					if (nSelectedCount == 0)
+					{
+						firstSelected = "sip:" + attributeValue;
+					}
+					nSelectedCount++;
+				}
+			}
+		}
+		if (result.length == 0)
+		{
+			alert(noUserCallSelectedMsg);
+			return false;
+		}
+		var calltoHref = "";
+		if (nSelectedCount == 1)
+		{
+			calltoHref = "callto:" + firstSelected;
+		}
+		else
+		{
+			calltoHref = "callto:" + result + "?MODE=VoIP";
+		}
+		var callToLink = (document.getElementById("ctl00_PlaceHolderMain_LnkCallTo"));
+		callToLink.href = calltoHref;
+		callToLink.click();
+		return;
+	}
+	function BtnRemoveUsersClick(viewId, removeFromGroup)
+	{
+		var userIds = GetSelectedUsers(viewId, "value", ",");
+		var userNames = GetSelectedUsers(viewId, "account", ",");
+		var confirmMessage;
+		if (removeFromGroup)
+		{
+			confirmMessage = "Chyst\u00E1te se odebrat ze skupiny n\u00E1sleduj\u00EDc\u00ED \u010Dleny:\r\n    ^1\r\nChcete tyto \u010Dleny odebrat?\r\n    ";
+		}
+		else
+		{
+			confirmMessage = "Chyst\u00E1te se odstranit n\u00E1sleduj\u00EDc\u00ED u\u017Eivatele z t\u00E9to kolekce web\u016F. U\u017Eivatel\u00E9 budou odstran\u011Bni a nebudou m\u00EDt p\u0159\u00EDstup k \u017E\u00E1dn\u00E9mu webu v r\u00E1mci dan\u00E9 kolekce.\r\n^1\r\nOpravdu chcete prov\u00E9st tuto operaci?";
+		}
+		if (userIds.length == 0)
+		{
+			alert(noUserSelectedMsg);
+			return false;
+		}
+		var hdn =  (document.getElementById("ctl00_PlaceHolderMain_HdnUsersToRemove"));
+		hdn.value = userIds;
+		var msg = StBuildParam(confirmMessage, userNames);
+		if(confirm(msg))
+		{
+			if (removeFromGroup)
+			{
+				__doPostBack('ctl00$PlaceHolderMain$BtnRemoveUsersFromGroup','');
+			}
+			else
+			{
+				__doPostBack('ctl00$PlaceHolderMain$BtnRemoveUsersFromSiteCollection','');
+			}
+			return true;
+		}
+		return false;
+	}
+	function JoinLeaveGroupClick()
+	{
+		__doPostBack('ctl00$PlaceHolderMain$BtnJoinLeaveGroup','');
+		return true;
+	}
+	var MSOWebPartPageFormName = "aspnetForm";
+	function GotoGroupSecScopes(groupId)
+	{
+		var url = "ViewGroupPermissions.aspx?ID=" + escapeProperly(groupId);
+		var feature;
+		if(window.showModalDialog)
+			feature = "resizable:yes;status:no;scroll:no;help:no;center:yes;dialogWidth:525pt;dialogHeight:400pt;";
+		else
+			feature = "resizable=yes,status=no,scrollbars=no,menubar=no,directories=no,location=no,width=650,height=500";
+		commonShowModalDialog(url, feature);
+		return true;
+	}
+	</SCRIPT>
+	</script>
+<style type="text/css">
+	.zz1_TopNavigationMenu_0 { background-color:white;visibility:hidden;display:none;position:absolute;left:0px;top:0px; }
+	.zz1_TopNavigationMenu_1 { text-decoration:none; }
+	.zz1_TopNavigationMenu_2 {  }
+	.zz1_TopNavigationMenu_3 { border-style:none; }
+	.zz1_TopNavigationMenu_4 {  }
+	.zz1_TopNavigationMenu_5 {  }
+	.zz1_TopNavigationMenu_6 { border-style:none; }
+	.zz1_TopNavigationMenu_7 {  }
+	.zz1_TopNavigationMenu_8 { background-color:#F2F3F4;border-color:#A7B4CE;border-width:1px;border-style:solid; }
+	.zz1_TopNavigationMenu_9 { border-style:none; }
+	.zz1_TopNavigationMenu_10 {  }
+	.zz1_TopNavigationMenu_11 { border-style:none; }
+	.zz1_TopNavigationMenu_12 {  }
+	.zz1_TopNavigationMenu_13 { border-style:none; }
+	.zz1_TopNavigationMenu_14 {  }
+	.zz1_TopNavigationMenu_15 { border-style:none; }
+	.zz1_TopNavigationMenu_16 { background-color:#CBE3F0; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_0 { background-color:white;visibility:hidden;display:none;position:absolute;left:0px;top:0px; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 { text-decoration:none; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_2 {  }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_3 { border-style:none; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_4 {  }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_5 { border-style:none; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_6 {  }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_7 {  }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_8 {  }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_9 { border-style:none; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_10 {  }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_11 { border-style:none; }
+	.ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_12 {  }
+	.zz2_QuickLaunchMenu_0 { background-color:white;visibility:hidden;display:none;position:absolute;left:0px;top:0px; }
+	.zz2_QuickLaunchMenu_1 { text-decoration:none; }
+	.zz2_QuickLaunchMenu_2 {  }
+	.zz2_QuickLaunchMenu_3 { border-style:none; }
+	.zz2_QuickLaunchMenu_4 {  }
+	.zz2_QuickLaunchMenu_5 { border-style:none; }
+	.zz2_QuickLaunchMenu_6 {  }
+	.zz2_QuickLaunchMenu_7 {  }
+	.zz2_QuickLaunchMenu_8 {  }
+	.zz2_QuickLaunchMenu_9 { border-style:none; }
+	.zz2_QuickLaunchMenu_10 {  }
+	.zz2_QuickLaunchMenu_11 { border-style:none; }
+	.zz2_QuickLaunchMenu_12 {  }
+
+</style></HEAD>
+<BODY scroll="yes" onload="javascript:if (typeof(_spBodyOnLoadWrapper) != 'undefined') _spBodyOnLoadWrapper();">
+  <form name="aspnetForm" method="post" action="/_layouts/people.aspx?MembershipGroupId=104" id="aspnetForm">
+<input type="hidden" name="__REQUESTDIGEST" id="__REQUESTDIGEST" value="0x3BBCC15B1E5CA16F679C55902BC9A09B06FB7F648EA24D8A5A2FF83D7144490C8DA606DA2DDF5B007AF30038C2C31E8516CE4F5D5B321EA463CE2B87EA1C0225,16 Nov 2026 15:11:29 -0000" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTE2NzA1Mjg3MDkPZBYCZg9kFgJmD2QWBAIBD2QWAgILD2QWAgIBDxYCHgRUZXh0BSZ7QzIwQTY3RTItNUJGMC00RTk3LUEwNzQtRUNBOEFCOUExQjQ5fWQCAw9kFggCCQ9kFgICAQ9kFgICAw8WAh4HVmlzaWJsZWgWAmYPZBYEAgIPZBYEAgEPFgIfAWhkAgMPFgIfAWhkAgMPDxYCHglBY2Nlc3NLZXkFAS9kZAIXD2QWAgIDDw8WBB8ABSHEjGxlbm92w6kgd2VidSBLcml6b3bDqSDFmcOtemVuw60fAWdkZAIlD2QWBAIBDzwrAA0BDBQrAAMFAzE6MhQrAAJkFCsABQULMDowLDA6MCwwOjAUKwACFgYfAAUhxIxsZW5vdsOpIHdlYnUgS3Jpem92w6kgxZnDrXplbsOtHgtOYXZpZ2F0ZVVybAUhcGVvcGxlLmFzcHg/TWVtYmVyc2hpcEdyb3VwSWQ9MTA0HghTZWxlY3RlZGdkFCsAAhYGHwAFIlZsYXN0bsOtY2kgd2VidSBLcml6b3bDqSDFmcOtemVuw60fAwUhcGVvcGxlLmFzcHg/TWVtYmVyc2hpcEdyb3VwSWQ9MTAzHwRoZBQrAAIWBh8ABRfEjGxlbm92w6kgd2VidSBJbnRyYW5ldB8DBR9wZW9wbGUuYXNweD9NZW1iZXJzaGlwR3JvdXBJZD02HwRoZGRkZAIJDw8WAh8BaGQWAgIFD2QWAgIBDzwrAAkBAA8WAh4NTmV2ZXJFeHBhbmRlZGdkZAI3D2QWEgIBDxYCHwFoZAIDD2QWBAIBDw8WAh8ABZABUG9tb2PDrSB0w6l0byBza3VwaW55IGx6ZSB1xb5pdmF0ZWzFr20gdWTEm2xpdCBvcHLDoXZuxJtuw60gayBwxZlpc3DDrXbDoW7DrSBuYSB3ZWJ1IFNoYXJlUG9pbnQ6IDxhIGhyZWY9Ii9rcml6b3Zlcml6ZW5pIj5Lcml6b3bDqSDFmcOtemVuw608L2E+ZGQCAw8WAh8BaGQCBw9kFgQCAQ8WAh8BaGQCAw8WAh8BaGQCCQ9kFgQCBQ8WAh8BaGQCBw8WAh8BaGQCCw9kFgYCAQ8WAh8BaGQCBQ8WAh8BaGQCBw8WAh8BaGQCDw8PFgIeBlZpZXdJZAUme2MyMGE2N2UyLTViZjAtNGU5Ny1hMDc0LWVjYThhYjlhMWI0OX1kZAIVDw8WAh8BaGRkAhcPDxYCHwFoZGQCGQ8PFgIfAWhkZBgCBStjdGwwMCRQbGFjZUhvbGRlckxlZnROYXZCYXIkTWVudVF1aWNrTGF1bmNoDw9kBSlTa3VwaW55XMSMbGVub3bDqSB3ZWJ1IEtyaXpvdsOpIMWZw616ZW7DrWQFOGN0bDAwJFBsYWNlSG9sZGVyVG9wTmF2QmFyJElkVG9wTmF2QmFyJFRvcE5hdmlnYXRpb25NZW51Dw9kBRJLcml6b3bDqSDFmcOtemVuw61kUjjaP+TydVbIuxRDgez/qEMiMPQ=" />
+
+<script type="text/JavaScript" language="JavaScript">
+<!--
+var L_Menu_BaseUrl="/krizoverizeni";
+var L_Menu_LCID="1029";
+var L_Menu_SiteTheme="";
+//-->
+</script>
+<script>
+function _spNavigateHierarchy(nodeDiv, dataSourceId, dataPath, url, listInContext, type) {
+    ProcessDefaultNavigateHierarchy(nodeDiv, dataSourceId, dataPath, url, listInContext, type, document.forms.aspnetForm, "", "\u002fkrizoverizeni\u002f_layouts\u002fpeople.aspx");
+}
+</script>
+<script src="/WebResource.axd?d=hGmmbATgC04-Q-NP5YrkvQ5y0iNl_4sD5KWDXd0Y4yIt953mVc3jBB4s7mtlGuylSTXIF6WDmhx0cNwUZ0azrDuC7AM1&amp;t=636271743501517547" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="0D0E3209" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWAgK3l6n5AQKq79KBDPJnNMpJIw04KIHp/OtkcYWfuLr6" />
+  <TABLE class="ms-main" CELLPADDING=0 CELLSPACING=0 BORDER=0 WIDTH="100%" HEIGHT="100%">
+	<tr><td>
+	   <table CELLPADDING=0 CELLSPACING=0 BORDER=0 WIDTH="100%">
+		<tr>
+		 <td colspan=4 class="ms-globalbreadcrumb">
+			<span id="TurnOnAccessibility" style="display:none">
+			   <a href="#" class="ms-skip" onclick="SetIsAccessibilityFeatureEnabled(true);UpdateAccessibilityUI();return false;">Zapnout režim s vyšším usnadněním</a>
+			</span>
+			<a href="javascript:;" onclick="javascript:this.href='#mainContent';" class="ms-skip" AccessKey="J">Přejít k hlavnímu obsahu</a>
+		 <table cellpadding=0 cellspacing=0 height=100% class="ms-globalleft">
+		   <tr>
+			<td class="ms-globallinks" style="padding-top: 2px;" height=100% valign=middle>
+			 <div>
+			  <span id="TurnOffAccessibility" style="display:none">
+				<a href="#" class="ms-acclink" onclick="SetIsAccessibilityFeatureEnabled(false);UpdateAccessibilityUI();return false;">Vypnout režim s vyšším usnadněním</a>
+			  </span>
+			  
+				<span id="ctl00_PlaceHolderGlobalNavigation_PlaceHolderGlobalNavigationSiteMap_GlobalNavigationSiteMap"><span><a class="ms-sitemapdirectional" href="/">Intranet ZZS JčK</a></span></span>
+			  
+			  </div>
+			 </td>
+		   </tr>
+		 </table>
+		 <table cellpadding="0" cellspacing="0" height=100% class="ms-globalright">
+		  <tr>
+			  <td valign="middle" class="ms-globallinks" style="padding-left:3px; padding-right:6px;">
+			  </td>
+		  <td valign="middle" class="ms-globallinks">
+			
+	 
+	<span style="display:none"><menu type='ServerMenu' id="zz3_ID_PersonalActionMenu" largeIconMode="true"><ie:menuitem id="zz4_ID_PersonalInformation" type="option" iconSrc="/_layouts/images/menuprofile.gif" onMenuClick="javascript:GoToPage('\u002fkrizoverizeni\u002f_layouts\u002fuserdisp.aspx?Force=True\u0026ID=' + _spUserId);return false;" text="Nastaven&#237;" description="Umožňuje aktualizovat informace o uživateli, m&#237;stn&#237; nastaven&#237; a v&#253;strahy." menuGroupId="100"></ie:menuitem><ie:menuitem id="zz5_ID_LoginAsDifferentUser" type="option" onMenuClick="javascript:LoginAsAnother('\u002fkrizoverizeni\u002f_layouts\u002fAccessDenied.aspx?loginasanotheruser=true', 0)" text="Přihl&#225;sit jako jin&#253; uživatel" description="Umožňuje přihl&#225;sit se pod jin&#253;m &#250;čtem." menuGroupId="200"></ie:menuitem><ie:menuitem id="zz6_ID_Logout" type="option" onMenuClick="window.location = '/krizoverizeni/_layouts/SignOut.aspx';" text="Odhl&#225;sit" description="Umožňuje odhl&#225;sit se od tohoto webu." menuGroupId="200"></ie:menuitem></menu></span><span title="Nabídka Otevřít"><div  id="zz7_Menu_t" class="ms-SPLink ms-SpLinkButtonInActive" onmouseover="MMU_PopMenuIfShowing(this);MMU_EcbTableMouseOverOut(this, true)" hoverActive="ms-SPLink ms-SpLinkButtonActive" hoverInactive="ms-SPLink ms-SpLinkButtonInActive" onclick=" MMU_Open(byid('zz3_ID_PersonalActionMenu'), MMU_GetMenuFromClientId('zz7_Menu'),event,false, null, 0);" foa="MMU_GetMenuFromClientId('zz7_Menu')" oncontextmenu="this.click(); return false;" nowrap="nowrap"><a id="zz7_Menu" accesskey="L" href="#" onclick="javascript:return false;" style="cursor:pointer;white-space:nowrap;" onfocus="MMU_EcbLinkOnFocusBlur(byid('zz3_ID_PersonalActionMenu'), this, true);" onkeydown="MMU_EcbLinkOnKeyDown(byid('zz3_ID_PersonalActionMenu'), MMU_GetMenuFromClientId('zz7_Menu'), event);" onclick=" MMU_Open(byid('zz3_ID_PersonalActionMenu'), MMU_GetMenuFromClientId('zz7_Menu'),event,false, null, 0);" oncontextmenu="this.click(); return false;" menuTokenValues="MENUCLIENTID=zz7_Menu,TEMPLATECLIENTID=zz3_ID_PersonalActionMenu" serverclientid="zz7_Menu">Vítejte Míra Vojtěch<img src="/_layouts/images/blank.gif" border="0" alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."/></a><img align="absbottom" src="/_layouts/images/menudark.gif" alt="" /></div></span><script type="text/javascript" language="javascript">var _spUserId=960;</script>
+
+
+		  </td>
+		  <td style="padding-left:1px;padding-right:3px;" class="ms-globallinks">|</td>
+			  <td valign="middle" class="ms-globallinks">
+				<table cellspacing="0" cellpadding="0">
+				 <tr>
+				  <td class="ms-globallinks"></td>
+				  <td class="ms-globallinks"></td>
+				 </tr>
+				</table>
+			  </td>
+			  <td valign="middle" class="ms-globallinks">&nbsp;
+				<a href="javascript:TopHelpButtonClick('NavBarHelpHome')" id="ctl00_PlaceHolderGlobalNavigation_TopHelpLink" AccessKey="6" title="Nápověda (nové okno)"><img src="/_layouts/images/helpicon.gif" align="absmiddle" border="0" alt="Nápověda (nové okno)" /></a>
+			  </td>
+			  </tr>
+			</table>
+			</td>
+		   </tr>
+	   </table>
+	  </td></tr>
+	<tr>
+	 <td class="ms-globalTitleArea">
+	  <table width=100% cellpadding=0 cellspacing=0 border=0>
+	   <tr>
+		<td id="GlobalTitleAreaImage" class="ms-titleimagearea"><img id="ctl00_onetidHeadbnnr0" src="http://intranet/images/logo_s2.gif" alt="" border="0" /></td>
+		<td class="ms-sitetitle" width=100%>
+		  
+		  <h1 class="ms-sitetitle">
+		   <a id="ctl00_PlaceHolderSiteName_onetidProjectPropertyTitle" href="/krizoverizeni/">
+			 Krizové řízení
+		   </a>
+		  </h1>
+		  
+		</td>
+		<td style="padding-top:8px;" valign=top>
+		  
+		  
+		</td>
+	   </tr>
+	  </table>
+	 </td>
+	</tr>
+	<TR>
+	 <TD id="onetIdTopNavBarContainer" WIDTH=100% class="ms-bannerContainer">
+		
+			
+		  <!--Top bar-->
+		  <table class="ms-bannerframe" border="0" cellspacing="0" cellpadding="0" width="100%">
+		   <tr>
+			<td nowrap valign="middle"></td>
+			<td class=ms-banner width=99% nowrap ID="HBN100" valign="middle">
+			  <!--webbot Bot="Navigation" startspan-->
+<table id="zz1_TopNavigationMenu" class="ms-topNavContainer zz1_TopNavigationMenu_5 zz1_TopNavigationMenu_2" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz1_TopNavigationMenun0"><table class="ms-topnav zz1_TopNavigationMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td nowrap="nowrap"><a class="zz1_TopNavigationMenu_1 ms-topnav zz1_TopNavigationMenu_3" href="/default.aspx" accesskey="1">Domovská stránka</a></td>
+			</tr>
+		</table></td><td width="0"></td><td width="0"></td><td onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz1_TopNavigationMenun1"><table class="ms-topnav zz1_TopNavigationMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td nowrap="nowrap"><a class="zz1_TopNavigationMenu_1 ms-topnav zz1_TopNavigationMenu_3" href="/dokumenty/default.aspx">Vnitřní předpisy ZZS JčK</a></td>
+			</tr>
+		</table></td><td width="0"></td><td width="0"></td><td onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz1_TopNavigationMenun2"><table class="ms-topnav zz1_TopNavigationMenu_4 ms-topnavselected zz1_TopNavigationMenu_10" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td nowrap="nowrap"><a class="zz1_TopNavigationMenu_1 ms-topnav zz1_TopNavigationMenu_3 ms-topnavselected zz1_TopNavigationMenu_9" href="/krizoverizeni/default.aspx">Krizové řízení</a></td>
+			</tr>
+		</table></td><td width="0"></td><td width="0"></td><td onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz1_TopNavigationMenun3"><table class="ms-topnav zz1_TopNavigationMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td nowrap="nowrap"><a class="zz1_TopNavigationMenu_1 ms-topnav zz1_TopNavigationMenu_3" href="/odbory/default.aspx">Odbory</a></td>
+			</tr>
+		</table></td><td width="0"></td><td width="0"></td><td onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz1_TopNavigationMenun4"><table class="ms-topnav zz1_TopNavigationMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td nowrap="nowrap"><a class="zz1_TopNavigationMenu_1 ms-topnav zz1_TopNavigationMenu_3" href="/vycvikove_stredisko/default.aspx">Výcvikové středisko</a></td>
+			</tr>
+		</table></td><td width="0"></td><td width="0"></td><td onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz1_TopNavigationMenun5"><table class="ms-topnav zz1_TopNavigationMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td nowrap="nowrap"><a class="zz1_TopNavigationMenu_1 ms-topnav zz1_TopNavigationMenu_3" href="/zzsjh/default.aspx">ZZS JH</a></td>
+			</tr>
+		</table></td><td width="0"></td>
+	</tr>
+</table>
+	
+			
+		
+
+			</td>
+			<td class=ms-banner>&nbsp;&nbsp;</td>
+			<td valign=bottom align=right>
+			 <table cellpadding=0 cellspacing=0 border=0>
+			  <tr>
+			   <td>
+				<table height=100% class="ms-siteaction" cellpadding=0 cellspacing=0>
+				 <tr>
+					
+				 </tr>
+				</table>
+			   </td>
+			  </tr>
+			 </table>
+			</td>
+		   </tr>
+		  </table>
+
+		
+	 </TD>
+	</TR>
+	
+		
+
+	
+	
+	
+	<TR height="100%"><TD><TABLE width="100%" height="100%" cellspacing="0" cellpadding="0">
+	<tr>
+	 <td class="ms-titlearealeft" id="TitleAreaImageCell" valign="middle" nowrap><div style="height:100%" class="ms-titleareaframe"></div></td>
+	 <td class="ms-titleareaframe" id="TitleAreaFrameClass">
+	  
+ <div class="ms-titleareaframe"><IMG SRC="/_layouts/images/blank.gif" width=1 height=100% alt=""></div>
+
+	 </td>
+	 <td valign=top  id="onetidPageTitleAreaFrame" class='ms-pagetitleareaframe' nowrap width="100%">
+	  <table id="onetidPageTitleAreaTable" cellpadding=0 cellspacing=0 width=100% border="0">
+	   <tr>
+		<td valign="top" class="ms-titlearea">
+		 
+		  <span id="ctl00_PlaceHolderTitleBreadcrumb_ContentMap"><span><a class="ms-sitemapdirectional" href="/">Intranet ZZS JčK</a></span><span> &gt; </span><span><a class="ms-sitemapdirectional" href="/krizoverizeni">Krizov&#233; ř&#237;zen&#237;</a></span><span> &gt; </span><span class="ms-sitemapdirectional">Osoby a skupiny</span></span> &nbsp;
+		 
+		</td>
+	   </tr>
+	   <tr>
+		<td height=100% valign=top ID=onetidPageTitle class="ms-pagetitle">
+		  <h2 class="ms-pagetitle">
+			
+	Osoby a skupiny:
+	<span id="ctl00_PlaceHolderPageTitleInTitleArea_LabelGroupName">Členové webu Krizové řízení</span>
+	
+
+		  </h2>
+		</td>
+	   </tr>
+	  </table>
+	 </td>
+	 <td class="ms-titlearearight">
+		
+		
+ <div style="height:100%;" class="ms-titleareaframe"><IMG SRC="/_layouts/images/blank.gif" width=1 height=1 alt=""></div>
+</td>
+	</tr>
+
+	<TR>
+	  <TD class="ms-leftareacell" valign=top height=100% id="LeftNavigationAreaCell">
+	   <table class=ms-nav width=100% height=100% cellpadding=0 cellspacing=0>
+		<tr>
+		 <td>
+		  <TABLE height="100%" class=ms-navframe CELLPADDING=0 CELLSPACING=0 border="0">
+		   <tr valign="top">
+			<td width="4px"><IMG SRC="/_layouts/images/blank.gif" width=4 height=1 alt=""></td>
+			<td valign="top" width="100%">
+			  
+			  
+			  
+			  
+	<div class="ms-quicklaunchouter">
+	<div class="ms-quickLaunch" style="width:100%">
+	<table id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch" class="ms-navSubMenu1 ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_7 ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_2" cellpadding="0" cellspacing="0" border="0">
+	<tr onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunchn0">
+		<td><table class="ms-navheader ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td width="100%"><a class="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 ms-navheader ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_3" href="groups.aspx">Skupiny</a></td>
+			</tr>
+		</table></td>
+	</tr><tr>
+		<td><table border="0" cellpadding="0" cellspacing="0" width="100%" class="ms-navSubMenu2 ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_8">
+			<tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunchn1">
+				<td><table class="ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_6 ms-selectednav ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_12" cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr>
+						<td width="100%"><a class="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_5 ms-selectednav ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_11" href="people.aspx?MembershipGroupId=104">Členové webu Krizové řízení</a></td>
+					</tr>
+				</table></td>
+			</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunchn2">
+				<td><table class="ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr>
+						<td width="100%"><a class="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_5" href="people.aspx?MembershipGroupId=103">Vlastníci webu Krizové řízení</a></td>
+					</tr>
+				</table></td>
+			</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunchn3">
+				<td><table class="ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr>
+						<td width="100%"><a class="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_5" href="people.aspx?MembershipGroupId=6">Členové webu Intranet</a></td>
+					</tr>
+				</table></td>
+			</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunchn4">
+				<td><table class="ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr>
+						<td width="100%"><a class="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 ms-navitem ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_5" href="groups.aspx">Další...</a></td>
+					</tr>
+				</table></td>
+			</tr>
+		</table></td>
+	</tr><tr onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunchn5">
+		<td><table class="ms-navheader ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr>
+				<td width="100%"><a class="ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_1 ms-navheader ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_3" href="people.aspx?MembershipGroupId=0&amp;FilterField1=ContentType&amp;FilterValue1=Person">Všechny osoby</a></td>
+			</tr>
+		</table></td>
+	</tr>
+</table>
+	</div>
+	</div>
+	<table border=0 cellspacing=0 cellpadding=0><tr height=5px><td/></tr></table>
+				<div class="ms-quicklaunchouter">
+				<div class="ms-quickLaunch" style="width:100%">
+				<h3 class="ms-standardheader"><label class="ms-hidden">Snadné spuštění</label>
+				<span>
+				<div class="ms-quicklaunchheader"><a id="ctl00_PlaceHolderLeftNavBar_idNavLinkViewAll" accesskey="3" href="/krizoverizeni/_layouts/viewlsts.aspx">Zobrazit veškerý obsah webu</a></div>
+				</span>
+				</h3>
+				<div id="ctl00_PlaceHolderLeftNavBar_QuickLaunchNavigationManager">
+	
+				<div>
+					
+						
+					 
+					<table id="zz2_QuickLaunchMenu" class="ms-navSubMenu1 zz2_QuickLaunchMenu_7 zz2_QuickLaunchMenu_2" cellpadding="0" cellspacing="0" border="0">
+		<tr onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun0">
+			<td><table class="ms-navheader zz2_QuickLaunchMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navheader zz2_QuickLaunchMenu_3" href="/krizoverizeni/_layouts/viewlsts.aspx?BaseType=0">Seznamy</a></td>
+				</tr>
+			</table></td>
+		</tr><tr>
+			<td><table border="0" cellpadding="0" cellspacing="0" width="100%" class="ms-navSubMenu2 zz2_QuickLaunchMenu_8">
+				<tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun1">
+					<td><table class="ms-navitem zz2_QuickLaunchMenu_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navitem zz2_QuickLaunchMenu_5" href="/krizoverizeni/Lists/Rezervace%20zasedac%20mstnosti%20OK/calendar.aspx">Rezervace zasedací místnosti OKŘ</a></td>
+						</tr>
+					</table></td>
+				</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun2">
+					<td><table class="ms-navitem zz2_QuickLaunchMenu_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navitem zz2_QuickLaunchMenu_5" href="/krizoverizeni/Lists/Kalend/calendar.aspx">Kalendář</a></td>
+						</tr>
+					</table></td>
+				</tr>
+			</table></td>
+		</tr><tr onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun3">
+			<td><table class="ms-navheader zz2_QuickLaunchMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navheader zz2_QuickLaunchMenu_3" href="/krizoverizeni/_layouts/viewlsts.aspx?ShowSites=1">Weby</a></td>
+				</tr>
+			</table></td>
+		</tr><tr onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun4">
+			<td><table class="ms-navheader zz2_QuickLaunchMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navheader zz2_QuickLaunchMenu_3" href="/krizoverizeni/_layouts/viewlsts.aspx?BaseType=1">Dokumenty</a></td>
+				</tr>
+			</table></td>
+		</tr><tr>
+			<td><table border="0" cellpadding="0" cellspacing="0" width="100%" class="ms-navSubMenu2 zz2_QuickLaunchMenu_8">
+				<tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun5">
+					<td><table class="ms-navitem zz2_QuickLaunchMenu_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navitem zz2_QuickLaunchMenu_5" href="/krizoverizeni/Dokumenty%20traumatologick%20havarijn%20a%20krizov%20piprave/Forms/AllItems.aspx">Dokumenty traumatologické havarijní a krizové připravenosti ZZS JčK</a></td>
+						</tr>
+					</table></td>
+				</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun6">
+					<td><table class="ms-navitem zz2_QuickLaunchMenu_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navitem zz2_QuickLaunchMenu_5" href="/krizoverizeni/Cvien%20IZS/Forms/AllItems.aspx">Cvičení IZS</a></td>
+						</tr>
+					</table></td>
+				</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun7">
+					<td><table class="ms-navitem zz2_QuickLaunchMenu_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navitem zz2_QuickLaunchMenu_5" href="/krizoverizeni/SPIS/Forms/AllItems.aspx">SPIS</a></td>
+						</tr>
+					</table></td>
+				</tr><tr onmouseover="Menu_HoverStatic(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun8">
+					<td><table class="ms-navitem zz2_QuickLaunchMenu_6" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navitem zz2_QuickLaunchMenu_5" href="/krizoverizeni/Vzdlvac%20materil%20pro%20MU/Forms/AllItems.aspx">Vzdělávací materiál pro MU</a></td>
+						</tr>
+					</table></td>
+				</tr>
+			</table></td>
+		</tr><tr onmouseover="Menu_HoverRoot(this)" onmouseout="Menu_Unhover(this)" onkeyup="Menu_Key(event)" id="zz2_QuickLaunchMenun9">
+			<td><table class="ms-navheader zz2_QuickLaunchMenu_4" cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td width="100%"><a class="zz2_QuickLaunchMenu_1 ms-navheader zz2_QuickLaunchMenu_3" href="/krizoverizeni/_layouts/people.aspx">Osoby a skupiny</a></td>
+				</tr>
+			</table></td>
+		</tr>
+	</table>
+				</div>
+				
+</div>
+				
+				<table width="100%" cellpadding="0" cellspacing="0" border="0">
+				<tr><td>
+		<table class="ms-recyclebin" width="100%" cellpadding="0" cellspacing="0" border="0">
+		<tr><td nowrap>
+		
+		</td></tr>
+		</table>
+		</td></tr></table>
+				</div>
+				</div>
+
+			  
+			</td>
+		   </tr>
+		   <tr><td colspan=2><IMG SRC="/_layouts/images/blank.gif" width=138 height=1 alt=""></td></tr>
+		  </TABLE>
+		 </td>
+		 <td></td>
+		</tr>
+	   </table>
+	  </TD>
+	  <td>
+ <div style="height:100%;" class="ms-pagemargin"><IMG SRC="/_layouts/images/blank.gif" width=10 height=1 alt=""></div>
+</td>
+	  <td class='ms-viewareaframe' valign="top">
+		<TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="ms-propertysheet">
+		 <TR valign="top" 
+style="display:none;"
+ >
+			<TD class="ms-descriptiontext" width="100%">
+			  
+			</TD>
+			   <TD ID=onetidYPadding width="10px"><IMG SRC="/_layouts/images/blank.gif" width=10 height=1 alt=""></TD>
+		  </TR>
+		  <TR 
+style="display:none;"
+>
+			<TD ID=onetidMainBodyPadding height="8px"><IMG SRC="/_layouts/images/blank.gif" width=1 height=8 alt=""></TD>
+		  </TR>
+		  <tr>
+			 <td valign="top" height="100%">
+			   <A name="mainContent"></A>
+				
+	
+	
+	<div class="ms-listdescription">
+	 <table class="ms-descriptiontext" cellspacing="0" border="0">
+		<tr>
+			<td colspan="2" width="100%">
+				<span id="ctl00_PlaceHolderMain_LabelGroupDescription">Pomocí této skupiny lze uživatelům udělit oprávnění k přispívání na webu SharePoint: <a href="/krizoverizeni">Krizové řízení</a></span>
+			</td>
+		</tr>
+		
+	 </table>
+	</div>
+	
+	<span style="display:none"><menu type='ServerMenu' id="ctl00_PlaceHolderMain_MenuTemplateView"><ie:menuitem id="ctl00_PlaceHolderMain_ctl04" type="option" onMenuClick="NavigateToView('{C20A67E2-5BF0-4E97-A074-ECA8AB9A1B49}')" text="Podrobn&#233; zobrazen&#237;" menuGroupId="2147483647"></ie:menuitem><ie:menuitem id="ctl00_PlaceHolderMain_ctl05" type="option" onMenuClick="NavigateToView('{F7C50E00-1F5E-4D49-8314-053B3BBEA198}')" text="Seznam" menuGroupId="2147483647"></ie:menuitem></menu></span>
+	<span style="display:none"><menu type='ServerMenu' id="ctl00_PlaceHolderMain_MenuTemplateNew" largeIconMode="true">
+		
+		
+	</menu></span>
+	<span style="display:none"><menu type='ServerMenu' id="ctl00_PlaceHolderMain_MenuTemplateActions" largeIconMode="true"><ie:menuitem id="ctl00_PlaceHolderMain_MenuItemEmail" type="option" onMenuClick="return BtnEmailClick(currentViewId);" text="Odeslat e-mail uživatelům" description="Odeslat e-mail vybran&#253;m uživatelům" menuGroupId="100"></ie:menuitem><ie:menuitem id="ctl00_PlaceHolderMain_MenuItemCall" type="option" onMenuClick="return BtnCallClick(currentViewId);" text="Volat vybran&#253;m uživatelům" description="Volat vybran&#253;m uživatelům" menuGroupId="100"></ie:menuitem></menu></span>
+	<span style="display:none"><menu type='ServerMenu' id="ctl00_PlaceHolderMain_MenuTemplateSettings" largeIconMode="true">
+		
+		
+		
+		
+		
+ </menu></span>
+	
+<table class="ms-menutoolbar" cellpadding="2" cellspacing="0" border="0" id="ctl00_PlaceHolderMain_ToolBar" width="100%" >
+  <tr>
+
+
+		<td class="ms-toolbar" nowrap="true">
+	<span title="Nabídka Otevřít"><div  id="ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions_t" class="ms-menubuttoninactivehover" onmouseover="MMU_PopMenuIfShowing(this);MMU_EcbTableMouseOverOut(this, true)" hoverActive="ms-menubuttonactivehover" hoverInactive="ms-menubuttoninactivehover" onclick=" MMU_Open(byid('ctl00_PlaceHolderMain_MenuTemplateActions'), MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions'),event,false, null, 0);" foa="MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions')" oncontextmenu="this.click(); return false;" nowrap="nowrap"><a id="ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions" accesskey="C" href="#" onclick="javascript:return false;" style="cursor:pointer;white-space:nowrap;" onfocus="MMU_EcbLinkOnFocusBlur(byid('ctl00_PlaceHolderMain_MenuTemplateActions'), this, true);" onkeydown="MMU_EcbLinkOnKeyDown(byid('ctl00_PlaceHolderMain_MenuTemplateActions'), MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions'), event);" onclick=" MMU_Open(byid('ctl00_PlaceHolderMain_MenuTemplateActions'), MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions'),event,false, null, 0);" oncontextmenu="this.click(); return false;" menuTokenValues="MENUCLIENTID=ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions,TEMPLATECLIENTID=ctl00_PlaceHolderMain_MenuTemplateActions" serverclientid="ctl00_PlaceHolderMain_ToolBar_RptControls_MenuActions">Akce<img src="/_layouts/images/blank.gif" border="0" alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."/></a><img align="absbottom" src="/_layouts/images/menudark.gif" alt="" /></div></span>
+		</td>
+	
+	<td width="99%" class="ms-toolbar" nowrap><IMG SRC="/_layouts/images/blank.gif" width=1 height=18 alt=""></td>
+
+
+		<td class="ms-toolbar" nowrap="true">
+	
+			 <table border=0 cellpadding=0 cellspacing=0 style='margin-right: 4px'>
+			  <tr>
+			   <td nowrap class="ms-toolbar" id="topPagingCell">
+			   <td>
+			   <td nowrap>&nbsp;</td>
+			   <td nowrap class="ms-listheaderlabel">Zobrazit:&nbsp;</td>
+			   <td nowrap class="ms-viewselector" onmouseover="this.className='ms-viewselectorhover'" onmouseout="this.className='ms-viewselector'" id="onetPeopleViewSelector">
+				<span title="Nabídka Otevřít"><div  id="ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector_t" class="ms-viewselector" onmouseover="MMU_PopMenuIfShowing(this);MMU_EcbTableMouseOverOut(this, true)" hoverActive="ms-viewselectorhover" hoverInactive="ms-viewselector" onclick=" MMU_Open(byid('ctl00_PlaceHolderMain_MenuTemplateView'), MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector'),event,true, 'onetPeopleViewSelector', 0);" foa="MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector')" oncontextmenu="this.click(); return false;" nowrap="nowrap"><a id="ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector" accesskey="W" href="#" onclick="javascript:return false;" style="cursor:pointer;white-space:nowrap;" onfocus="MMU_EcbLinkOnFocusBlur(byid('ctl00_PlaceHolderMain_MenuTemplateView'), this, true);" onkeydown="MMU_EcbLinkOnKeyDown(byid('ctl00_PlaceHolderMain_MenuTemplateView'), MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector'), event);" onclick=" MMU_Open(byid('ctl00_PlaceHolderMain_MenuTemplateView'), MMU_GetMenuFromClientId('ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector'),event,true, 'onetPeopleViewSelector', 0);" oncontextmenu="this.click(); return false;" menuTokenValues="MENUCLIENTID=ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector,TEMPLATECLIENTID=ctl00_PlaceHolderMain_MenuTemplateView" serverclientid="ctl00_PlaceHolderMain_ToolBar_RightRptControls_MenuViewSelector">Podrobné zobrazení<img src="/_layouts/images/blank.gif" border="0" alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."/></a><img align="absbottom" src="/_layouts/images/blank.gif" alt="" /></div></span>
+			   </td>
+			  </tr>
+			  </table>
+			
+		</td>
+	
+  </tr>
+</table>
+
+	<TABLE width="100%" cellspacing=0 cellpadding=0 border=0><SCRIPT>
+ctx = new ContextInfo();
+ctx.listBaseType = 0;
+ctx.listTemplate = 112;
+ctx.listName = "{270EACE3-8F7E-426F-A2EC-E9A84C1E5269}";
+ctx.view = "{C20A67E2-5BF0-4E97-A074-ECA8AB9A1B49}";
+ctx.listUrlDir = "\u002f_catalogs\u002fusers";
+ctx.HttpPath = "\u002fkrizoverizeni\u002f_vti_bin\u002fowssvr.dll?CS=65001";
+ctx.HttpRoot = "http:\u002f\u002fintranet.zzsjck.local\u002fkrizoverizeni";
+ctx.imagesPath = "\u002f_layouts\u002fimages\u002f";
+ctx.PortalUrl = "";
+ctx.SendToLocationName = "";
+ctx.SendToLocationUrl = "";
+ctx.RecycleBinEnabled = -1;
+ctx.OfficialFileName = "";
+ctx.WriteSecurity = "1";
+ctx.SiteTitle = "Krizov\u00e9 \u0159\u00edzen\u00ed";
+ctx.ListTitle = "Seznam informac\u00ed o u\u017eivatel\u00edch";
+if (ctx.PortalUrl == "") ctx.PortalUrl = null;
+ctx.displayFormUrl = "\u002fkrizoverizeni\u002f_layouts\u002fuserdisp.aspx";
+ctx.editFormUrl = "\u002fkrizoverizeni\u002f_layouts\u002fuseredit.aspx";
+ctx.isWebEditorPreview = 0;
+ctx.ctxId = 1;
+g_ViewIdToViewCounterMap[ "{C20A67E2-5BF0-4E97-A074-ECA8AB9A1B49}" ]= 1;
+ctx.CurrentUserId = 960;
+ 
+ctx1 = ctx;
+</SCRIPT><tr><td><TABLE ID="{270EACE3-8F7E-426F-A2EC-E9A84C1E5269}-{C20A67E2-5BF0-4E97-A074-ECA8AB9A1B49}" Summary="Seznam informací o uživatelích" o:WebQuerySourceHref="http://intranet.zzsjck.local/_vti_bin/owssvr.dll?CS=65001&XMLDATA=1&RowLimit=0&List={270EACE3-8F7E-426F-A2EC-E9A84C1E5269}&View={C20A67E2-5BF0-4E97-A074-ECA8AB9A1B49}" width="100%" class="ms-listviewtable" border=0 cellspacing=0 cellpadding=1 dir="None" summary="Seznam informací o uživatelích"><TR class="ms-viewheadertr" VALIGN=TOP><IFRAME src="javascript:false;" id="FilterIframe1" name="FilterIframe1" style="display:none" height="0" width="0" title="Skrytý rámec pro filtrování seznamu" FilterLink="http://intranet.zzsjck.local/krizoverizeni/_layouts/people.aspx?Filter=1&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104"></IFRAME><TH nowrap scope="col" class="ms-vh2-nofilter-icon" id="diidViewColumnHeaderUserSelection1" > <a href='Javascript:ToggleSelectionAllUsers("1")'  onclick='ToggleSelectionAllUsers("1");return false;'> <img style='border:0' src='/_layouts/images/unchecka.gif' id='cbxUserSelectAll1' alt='Vybrat či vymazat vše'></a></TH><TH nowrap scope="col" class="ms-vh-icon" id="diidViewColumnHeaderAttachments1" > <div style="width:100%;position:relative;left:0;top:0;"><TABLE style="width:100%;" Sortable="" SortDisable="" FilterDisable="" Filterable="" Name="Attachments" CtxNum="1" DisplayName="Přílohy" FieldType="Attachments" ResultType="" SortFields="SortField=Attachments&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104" height="100%" cellspacing=1 cellpadding=0 class="ms-unselectedtitle" onmouseover="OnMouseOverFilter(this)"><TR><TD width="100%" Class="ms-vb" nowrap><A ID="diidSortAttachments" onfocus="OnFocusFilter(this)" TITLE="Řadit podle Přílohy" HREF="javascript:" OnClick="javascript:return OnClickFilter(this,event);"  SORTINGFIELDS="SortField=Attachments&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104"><IMG SRC="/_layouts/images/attachhd.gif" BORDER=0 ALT="Řadit podle příloh"><img src="/_layouts/images/blank.gif" class="ms-hidden" border=0 width=1 height=1 alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."></A><IMG SRC="/_layouts/images/blank.gif" ALT="" BORDER=0><IMG SRC="/_layouts/images/blank.gif" BORDER=0 ALT=""></TD><TD style="position:absolute;"><IMG src="/_layouts/images/blank.gif" width=13px style="visibility: hidden" alt=""></TD></TR></TABLE></div></TH><TH nowrap scope="col" class="ms-vh2-nograd" id="diidViewColumnHeaderPictureDisp1" > Obrázek</TH><TH nowrap scope="col" class="ms-vh2" id="diidViewColumnHeaderImnName1" > <div style="width:100%;position:relative;left:0;top:0;"><TABLE style="width:100%;" Sortable="TRUE" SortDisable="" FilterDisable="" Filterable="" Name="ImnName" CtxNum="1" DisplayName="Název" FieldType="Computed" ResultType="" SortFields="SortField=ImnName&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104" height="100%" cellspacing=1 cellpadding=0 class="ms-unselectedtitle" onmouseover="OnMouseOverFilter(this)"><TR><TD width="100%" Class="ms-vb" nowrap><span nowrap dir=""><img border="0" valign="middle" height="12" width="12" altbase="Pro tento sloupec je povolena prezence." src="/_layouts/images/blank.gif" onload="IMNRegisterHeader()" id="imnhdr0"><IMG SRC="/_layouts/images/blank.gif" width=4 height=1 alt=""><A ID="diidSortImnName" onfocus="OnFocusFilter(this)" TITLE="Řadit podle Název" HREF="javascript:" OnClick="javascript:return OnClickFilter(this,event);"  SORTINGFIELDS="SortField=ImnName&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104">Název<img src="/_layouts/images/blank.gif" class="ms-hidden" border=0 width=1 height=1 alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."></A><IMG SRC="/_layouts/images/blank.gif" ALT="" BORDER=0><IMG SRC="/_layouts/images/blank.gif" BORDER=0 ALT=""></span></TD><TD style="position:absolute;"><IMG src="/_layouts/images/blank.gif" width=13px style="visibility: hidden" alt=""></TD></TR></TABLE></div></TH><TH nowrap scope="col" class="ms-vh2-nograd" id="diidViewColumnHeaderNotes1" > O sobě<IMG SRC="/_layouts/images/blank.gif" BORDER=0 ALT="Filtr"></TH><TH nowrap scope="col" class="ms-vh2" id="diidViewColumnHeaderJobTitle1" > <div style="width:100%;position:relative;left:0;top:0;"><TABLE style="width:100%;" Sortable="" SortDisable="" FilterDisable="" Filterable="" Name="JobTitle" CtxNum="1" DisplayName="Název úlohy" FieldType="Text" ResultType="" SortFields="SortField=JobTitle&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104" height="100%" cellspacing=1 cellpadding=0 class="ms-unselectedtitle" onmouseover="OnMouseOverFilter(this)"><TR><TD width="100%" Class="ms-vb" nowrap><A ID="diidSortJobTitle" onfocus="OnFocusFilter(this)" TITLE="Řadit podle Název úlohy" HREF="javascript:" OnClick="javascript:return OnClickFilter(this,event);"  SORTINGFIELDS="SortField=JobTitle&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104">Název úlohy<img src="/_layouts/images/blank.gif" class="ms-hidden" border=0 width=1 height=1 alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."></A><IMG SRC="/_layouts/images/blank.gif" ALT="" BORDER=0><IMG SRC="/_layouts/images/blank.gif" BORDER=0 ALT=""></TD><TD style="position:absolute;"><IMG src="/_layouts/images/blank.gif" width=13px style="visibility: hidden" alt=""></TD></TR></TABLE></div></TH><TH nowrap scope="col" class="ms-vh2" id="diidViewColumnHeaderDepartment1" > <div style="width:100%;position:relative;left:0;top:0;"><TABLE style="width:100%;" Sortable="" SortDisable="" FilterDisable="" Filterable="" Name="Department" CtxNum="1" DisplayName="Oddělení" FieldType="Text" ResultType="" SortFields="SortField=Department&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104" height="100%" cellspacing=1 cellpadding=0 class="ms-unselectedtitle" onmouseover="OnMouseOverFilter(this)"><TR><TD width="100%" Class="ms-vb" nowrap><A ID="diidSortDepartment" onfocus="OnFocusFilter(this)" TITLE="Řadit podle Oddělení" HREF="javascript:" OnClick="javascript:return OnClickFilter(this,event);"  SORTINGFIELDS="SortField=Department&amp;SortDir=Asc&amp;View=%7bC20A67E2%2d5BF0%2d4E97%2dA074%2dECA8AB9A1B49%7d&amp;MembershipGroupId=104">Oddělení<img src="/_layouts/images/blank.gif" class="ms-hidden" border=0 width=1 height=1 alt="K otevření nabídky použijte kombinaci kláves SHIFT+ENTER (nové okno)."></A><IMG SRC="/_layouts/images/blank.gif" ALT="" BORDER=0><IMG SRC="/_layouts/images/blank.gif" BORDER=0 ALT=""></TD><TD style="position:absolute;"><IMG src="/_layouts/images/blank.gif" width=13px style="visibility: hidden" alt=""></TD></TR></TABLE></div></TH></TR><TR class=""><TD Class="ms-vb-icon"><input type="checkbox" name="spUserSelectionCheckBox_1" id="spUserSelCb_110" value="10" account="ZZSJCK\benesm" email="benesm@ZZSJcK.local" sip="" onclick="UserSelectionOnClick(this,'1');" title="Beneš Miroslav"/> </TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"><a ONCLICK="GoToLink(this);return false;" href="/krizoverizeni/_layouts/userdisp.aspx?ID=10"><IMG width="62" height="62" border="0" SRC="/_layouts/images/person.gif" ALT="Zástupný symbol obrázku: Beneš Miroslav " > </a></TD><TD Class="ms-vb2"><table cellpadding=0 cellspacing=0 dir=""><tr><td style="padding-right: 3px;"><a href="javascript:" onclick="IMNImageOnClick();return false;" class="ms-imnlink"><img title="" alt="Bez informací o stavu a volném čase" name="imnmark" border="0" valign="middle" height="12" width="12" src="/_layouts/images/blank.gif" sip="benesm@ZZSJcK.local" id="imn{20261116-1511-2904-8A02-E8281E2D3F47},type=smtp" ></a></td><td style="padding: 1px 0px 0px 0px;" class="ms-vb"><A ONCLICK="GoToLink(this);return false;" HREF="/krizoverizeni/_layouts/userdisp.aspx?ID=10">Beneš Miroslav</A></td></tr></table></TD><TD Class="ms-vb2"><div dir=""></div></TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"></TD></TR><TR class="ms-alternating"><TD Class="ms-vb-icon"><input type="checkbox" name="spUserSelectionCheckBox_1" id="spUserSelCb_1184" value="184" account="ZZSJCK\scerbovan" email="scerbovan@zzsjck.cz" sip="" onclick="UserSelectionOnClick(this,'1');" title="Majstrová Nikola"/> </TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"><a ONCLICK="GoToLink(this);return false;" href="/krizoverizeni/_layouts/userdisp.aspx?ID=184"><IMG width="62" height="62" border="0" SRC="/_layouts/images/person.gif" ALT="Zástupný symbol obrázku: Majstrová Nikola " > </a></TD><TD Class="ms-vb2"><table cellpadding=0 cellspacing=0 dir=""><tr><td style="padding-right: 3px;"><a href="javascript:" onclick="IMNImageOnClick();return false;" class="ms-imnlink"><img title="" alt="Bez informací o stavu a volném čase" name="imnmark" border="0" valign="middle" height="12" width="12" src="/_layouts/images/blank.gif" sip="scerbovan@zzsjck.cz" id="imn{20261116-1511-2904-9CCC-90F570775D7F},type=smtp" ></a></td><td style="padding: 1px 0px 0px 0px;" class="ms-vb"><A ONCLICK="GoToLink(this);return false;" HREF="/krizoverizeni/_layouts/userdisp.aspx?ID=184">Majstrová Nikola</A></td></tr></table></TD><TD Class="ms-vb2"><div dir=""></div></TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"></TD></TR><TR class=""><TD Class="ms-vb-icon"><input type="checkbox" name="spUserSelectionCheckBox_1" id="spUserSelCb_11" value="1" account="ZZSJCK\pitalekj" email="pitalekj@ZZSJcK.local" sip="pitalekj@ZZSJcK.local" onclick="UserSelectionOnClick(this,'1');" title="Pitálek Jan"/> </TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"><a ONCLICK="GoToLink(this);return false;" href="/krizoverizeni/_layouts/userdisp.aspx?ID=1"><IMG width="62" height="62" border="0" SRC="/_layouts/images/person.gif" ALT="Zástupný symbol obrázku: Pitálek Jan " > </a></TD><TD Class="ms-vb2"><table cellpadding=0 cellspacing=0 dir=""><tr><td style="padding-right: 3px;"><a href="javascript:" onclick="IMNImageOnClick();return false;" class="ms-imnlink"><img title="" alt="Bez informací o stavu a volném čase" name="imnmark" border="0" valign="middle" height="12" width="12" src="/_layouts/images/blank.gif" sip="pitalekj@ZZSJcK.local" id="imn{20261116-1511-2904-A40A-A1DD27C9C05D},type=sip" ></a></td><td style="padding: 1px 0px 0px 0px;" class="ms-vb"><A ONCLICK="GoToLink(this);return false;" HREF="/krizoverizeni/_layouts/userdisp.aspx?ID=1">Pitálek Jan</A></td></tr></table></TD><TD Class="ms-vb2"><div dir=""><div></div></div></TD><TD Class="ms-vb2">Správce</TD><TD Class="ms-vb2">OIKT</TD></TR><TR class="ms-alternating"><TD Class="ms-vb-icon"><input type="checkbox" name="spUserSelectionCheckBox_1" id="spUserSelCb_1553" value="553" account="ZZSJCK\svobodap" email="svobodap@ZZSJcK.local" sip="" onclick="UserSelectionOnClick(this,'1');" title="Svoboda Petr"/> </TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"><a ONCLICK="GoToLink(this);return false;" href="/krizoverizeni/_layouts/userdisp.aspx?ID=553"><IMG width="62" height="62" border="0" SRC="/_layouts/images/person.gif" ALT="Zástupný symbol obrázku: Svoboda Petr " > </a></TD><TD Class="ms-vb2"><table cellpadding=0 cellspacing=0 dir=""><tr><td style="padding-right: 3px;"><a href="javascript:" onclick="IMNImageOnClick();return false;" class="ms-imnlink"><img title="" alt="Bez informací o stavu a volném čase" name="imnmark" border="0" valign="middle" height="12" width="12" src="/_layouts/images/blank.gif" sip="svobodap@ZZSJcK.local" id="imn{20261116-1511-2904-9B53-3DD7E2F919C8},type=smtp" ></a></td><td style="padding: 1px 0px 0px 0px;" class="ms-vb"><A ONCLICK="GoToLink(this);return false;" HREF="/krizoverizeni/_layouts/userdisp.aspx?ID=553">Svoboda Petr</A></td></tr></table></TD><TD Class="ms-vb2"><div dir=""></div></TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"></TD></TR><TR class=""><TD Class="ms-vb-icon"><input type="checkbox" name="spUserSelectionCheckBox_1" id="spUserSelCb_1973" value="973" account="ZZSJCK\_krp" email="" sip="" onclick="UserSelectionOnClick(this,'1');" title="ZZSJCK\_krp"/> </TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"><a ONCLICK="GoToLink(this);return false;" href="/krizoverizeni/_layouts/userdisp.aspx?ID=973"><IMG width="62" height="62" border="0" SRC="/_layouts/images/person.gif" ALT="Zástupný symbol obrázku: ZZSJCK\_krp " > </a></TD><TD Class="ms-vb2"><table cellpadding=0 cellspacing=0 dir=""><tr><td style="padding-right: 3px;"><img title="" alt="Bez informací o stavu a volném čase" name="imnmark" border="0" valign="middle" height="12" width="12" src="/_layouts/images/blank.gif" ></td><td style="padding: 1px 0px 0px 0px;" class="ms-vb"><A ONCLICK="GoToLink(this);return false;" HREF="/krizoverizeni/_layouts/userdisp.aspx?ID=973">ZZSJCK\_krp</A></td></tr></table></TD><TD Class="ms-vb2"><div dir=""></div></TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"></TD></TR><TR class="ms-alternating"><TD Class="ms-vb-icon"><input type="checkbox" name="spUserSelectionCheckBox_1" id="spUserSelCb_19" value="9" account="ZZSJCK\oikt" email="OIKT@ZZSJcK.local" sip="" onclick="UserSelectionOnClick(this,'1');" title="ZZSJCK\oikt"/> </TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"><a ONCLICK="GoToLink(this);return false;" href="/krizoverizeni/_layouts/userdisp.aspx?ID=9"><IMG width="62" height="62" border="0" SRC="/_layouts/images/person.gif" ALT="Zástupný symbol obrázku: ZZSJCK\oikt " > </a></TD><TD Class="ms-vb2"><table cellpadding=0 cellspacing=0 dir=""><tr><td style="padding-right: 3px;"><a href="javascript:" onclick="IMNImageOnClick();return false;" class="ms-imnlink"><img title="" alt="Bez informací o stavu a volném čase" name="imnmark" border="0" valign="middle" height="12" width="12" src="/_layouts/images/blank.gif" sip="OIKT@ZZSJcK.local" id="imn{20261116-1511-2904-A909-663C3DB701A8},type=smtp" ></a></td><td style="padding: 1px 0px 0px 0px;" class="ms-vb"><A ONCLICK="GoToLink(this);return false;" HREF="/krizoverizeni/_layouts/userdisp.aspx?ID=9">ZZSJCK\oikt</A></td></tr></table></TD><TD Class="ms-vb2"><div dir=""></div></TD><TD Class="ms-vb2"></TD><TD Class="ms-vb2"></TD></TR></TABLE></td></tr></table><input type="checkbox" id="spToggleUserSelectionCheckBox_1" style="visibility:hidden;" />
+	
+	<input name="ctl00$PlaceHolderMain$HdnUsersToRemove" type="hidden" id="ctl00_PlaceHolderMain_HdnUsersToRemove" />
+	
+	
+	
+	<a id="ctl00_PlaceHolderMain_LnkCallTo" href="callto:" style="visibility:hidden;display:none">Volat vybraným uživatelům</a>
+
+			 </td>
+		  </tr>
+		</table>
+	  </td>
+	  <td class="ms-rightareacell">
+ <div style="height:100%;" class="ms-pagemargin"><IMG SRC="/_layouts/images/blank.gif" width=10 height=1 alt=""></div>
+</td>
+	</TR>
+<tr>
+	<td class="ms-pagebottommarginleft"><IMG SRC="/_layouts/images/blank.gif" width=1 height=10 alt=""></td>
+	<td class="ms-pagebottommargin"><IMG SRC="/_layouts/images/blank.gif" width=1 height=10 alt=""></td>
+	<td class="ms-bodyareapagemargin"><IMG SRC="/_layouts/images/blank.gif" width=1 height=10 alt=""></td>
+	<td class="ms-pagebottommarginright"><IMG SRC="/_layouts/images/blank.gif" width=1 height=10 alt=""></td>
+</tr>
+	</TABLE></TD></TR>
+  </TABLE>
+  
+	  
+  
+   <input type="text" name="__spDummyText1" style="display:none;" size=1/>
+   <input type="text" name="__spDummyText2" style="display:none;" size=1/>
+  
+
+<script type="text/javascript">
+//<![CDATA[
+var zz1_TopNavigationMenu_Data = new Object();
+zz1_TopNavigationMenu_Data.disappearAfter = 500;
+zz1_TopNavigationMenu_Data.horizontalOffset = 0;
+zz1_TopNavigationMenu_Data.verticalOffset = 0;
+zz1_TopNavigationMenu_Data.hoverClass = 'zz1_TopNavigationMenu_16 ms-topNavFlyOutsHover';
+zz1_TopNavigationMenu_Data.hoverHyperLinkClass = 'zz1_TopNavigationMenu_15 ms-topNavFlyOutsHover';
+zz1_TopNavigationMenu_Data.staticHoverClass = 'zz1_TopNavigationMenu_14 ms-topNavHover';
+zz1_TopNavigationMenu_Data.staticHoverHyperLinkClass = 'zz1_TopNavigationMenu_13 ms-topNavHover';
+if (typeof(overrideMenu_HoverStatic) == 'function' && typeof(Menu_HoverStatic) == 'function')
+{
+_spBodyOnLoadFunctionNames.push('enableFlyoutsAfterDelay');
+Menu_HoverStatic = overrideMenu_HoverStatic;
+}
+var flyoutsAllowed = false;
+function enableFlyoutsAfterDelay()
+{
+setTimeout('flyoutsAllowed = true;', 50);
+}
+function overrideMenu_HoverStatic(item)
+{
+if (!flyoutsAllowed || (document.readyState != null && document.readyState != 'complete'))
+{
+setTimeout(delayMenu_HoverStatic(item), 50);
+}
+else
+{
+// this code is the default ASP.NET implementation of Menu_HoverStatic
+var node = Menu_HoverRoot(item);
+var data = Menu_GetData(item);
+if (!data) return;
+__disappearAfter = data.disappearAfter;
+Menu_Expand(node, data.horizontalOffset, data.verticalOffset);
+}
+}
+function delayMenu_HoverStatic(item)
+{
+return (function()
+{
+overrideMenu_HoverStatic(item);
+});
+}
+var ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_Data = new Object();
+ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_Data.disappearAfter = 500;
+ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_Data.horizontalOffset = 0;
+ctl00_PlaceHolderLeftNavBar_MenuQuickLaunch_Data.verticalOffset = 0;
+var zz2_QuickLaunchMenu_Data = new Object();
+zz2_QuickLaunchMenu_Data.disappearAfter = 500;
+zz2_QuickLaunchMenu_Data.horizontalOffset = 0;
+zz2_QuickLaunchMenu_Data.verticalOffset = 0;
+//]]>
+</script>
+</form>
+  
+</BODY>
+</HTML>

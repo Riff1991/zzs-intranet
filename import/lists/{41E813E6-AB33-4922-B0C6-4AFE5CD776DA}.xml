@@ -1,0 +1,45 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+     xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+     xmlns:rs='urn:schemas-microsoft-com:rowset'
+     xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+   <s:ElementType name='row' content='eltOnly' rs:CommandTimeout='30'>
+      <s:AttributeType name='ows_DocIcon' rs:name='Typ' rs:number='1'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_LinkFilename' rs:name='NÃ¡zev' rs:number='2'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Modified' rs:name='ZmÄnÄno' rs:number='3'>
+         <s:datatype dt:type='datetime' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Editor' rs:name='ZmÄnil' rs:number='4'>
+         <s:datatype dt:type='string' dt:lookup='true' dt:maxLength='512' />
+      </s:AttributeType>
+   </s:ElementType>
+</s:Schema>
+<rs:data>
+   <z:row ows_LinkFilename='BEZPEÄNOSTNÃ LIST - KyslÃ­k stlaÄenÃ½' ows_Modified='2024-10-04 10:25:55' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='CLP KLASIFIKACE' ows_Modified='2023-08-15 10:03:55' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='ÄSOB MotivaÄnÃ­ program' ows_Modified='2023-08-15 11:10:14' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='Digitalizace_dÃ¡vky nemocenskÃ©ho pojiÅ¡tÄnÃ­_1.1.2025' ows_Modified='2025-01-09 12:51:59' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='ElektronickÃ© vÃ½platnÃ­ lÃ­stky' ows_Modified='2019-11-21 08:03:10' ows_Editor='748;#FialovÃ¡ Lucie' />
+   <z:row ows_LinkFilename='eSPIS' ows_Modified='2025-04-30 09:13:34' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='KOLEKTIVNÃ SMLOUVA NA ROK 2026 s rozpoÄtem FKSP_19.2.2026' ows_Modified='2026-02-25 13:00:32' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='NabÃ­dka benefitnÃ­ho programu Bank at Work_UniCredit Bank' ows_Modified='2024-02-28 08:02:38' ows_Editor='748;#FialovÃ¡ Lucie' />
+   <z:row ows_LinkFilename='NabÃ­dka benefitnÃ­ho programu Raiffeisen Bank pro zamÄstnance ZZS JÄK' ows_Modified='2024-06-19 07:57:10' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='NabÃ­dka preventivnÃ­ho programu Podpora profesÃ­ ZZS (ZP MV ÄR 211)' ows_Modified='2026-03-30 09:26:36' ows_Editor='748;#FialovÃ¡ Lucie' />
+   <z:row ows_LinkFilename='NabÃ­dka tarifÅ¯ vÃ½hodnÃ©ho volÃ¡nÃ­ a dat O2 Family' ows_Modified='2023-07-24 13:34:34' ows_Editor='748;#FialovÃ¡ Lucie' />
+   <z:row ows_LinkFilename='NavigaÄnÃ­ mapa a tel. seznam Nemocnice Ä.BudÄjovice' ows_Modified='2023-08-15 08:00:01' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='Postup pro zaloÅ¾enÃ­ osobnÃ­ho ÃºÄtu Pluxee' ows_Modified='2024-01-16 07:56:14' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='PracovnÃ­ volno zamÄstnancÅ¯ k ÃºÄasti na tÃ¡borech, sportovnÃ­ch soustÅedÄnÃ­ch' ows_Modified='2025-05-06 11:34:22' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='Sleva_pojistnÃ©_pracujÃ­cÃ­ starobnÃ­ dÅ¯chodce' ows_Modified='2025-01-24 07:40:48' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='SystÃ©m psychosociÃ¡lnÃ­ intervenÄnÃ­ sluÅ¾by (SPIS)' ows_Modified='2023-08-15 09:26:35' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_LinkFilename='TelefonickÃ© kontakty a adresy vÃ½jezdovÃ½ch zÃ¡kladen' ows_Modified='2023-08-15 11:29:49' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='pdf' ows_LinkFilename='DIP se slevou - spoÅenÃ­ na stÃ¡ÅÃ­, 26_01.pdf' ows_Modified='2026-01-21 12:48:15' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='pdf' ows_LinkFilename='Form SM01.21, 1.22, 02.03 VyjÃ¡dÅenÃ­ lÃ©kaÅe pro PÄR a MP.pdf' ows_Modified='2024-10-03 12:00:16' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='docx' ows_LinkFilename='PevnÃ½ kurz EUR_CZK_2026.docx' ows_Modified='2026-01-02 09:49:58' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='doc' ows_LinkFilename='Postup_zmÄna pÅÃ­spÄvku_penzijnÃ­ pÅipojiÅ¡tÄnÃ­_doplÅkovÃ© penzijnÃ­ spoÅenÃ­_Å¾ivotnÃ­ pojiÅ¡tÄnÃ­.doc' ows_Modified='2022-01-07 06:31:02' ows_Editor='748;#FialovÃ¡ Lucie' />
+   <z:row ows_DocIcon='xlsx' ows_LinkFilename='TelefonnÃ­ seznam ÅeditelstvÃ­ ZZS JÄK_akt. listopad 2026.xlsx' ows_Modified='2026-11-03 10:27:54' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+</rs:data>
+</xml>

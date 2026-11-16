@@ -1,0 +1,37 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+     xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+     xmlns:rs='urn:schemas-microsoft-com:rowset'
+     xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+   <s:ElementType name='row' content='eltOnly' rs:CommandTimeout='30'>
+      <s:AttributeType name='ows_LinkTitle' rs:name='PÅÃ­jmenÃ­' rs:number='1'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Jm_x00e9_no' rs:name='JmÃ©no' rs:number='2'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_P_x0159__x00ed_jmen_x00ed_' rs:name='UmÃ­stÄnÃ­' rs:number='3'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Klapka' rs:name='Klapka' rs:number='4'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_cislo' rs:name='Äislo' rs:number='5'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Mobil' rs:name='Mobil' rs:number='6'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+   </s:ElementType>
+</s:Schema>
+<rs:data>
+   <z:row ows_LinkTitle='DvoÅÃ¡kovÃ¡' ows_Jm_x00e9_no='VÃ¡clava' ows_P_x0159__x00ed_jmen_x00ed_='administrativnÃ­ pracovnice' ows_cislo='380711926.000000' />
+   <z:row ows_LinkTitle='Mgr. VlkojanovÃ¡' ows_Jm_x00e9_no='Lucie' ows_P_x0159__x00ed_jmen_x00ed_='VrchnÃ­ sestra' ows_cislo='380761503.000000' ows_Mobil='720897809.000000' />
+   <z:row ows_LinkTitle='MUDr. Å Å¥astnÃ¡' ows_Jm_x00e9_no='Andrea' ows_P_x0159__x00ed_jmen_x00ed_='VedoucÃ­ lÃ©kaÅ' ows_cislo='380761501.000000' ows_Mobil='776152750.000000' />
+   <z:row ows_LinkTitle='Sestry' ows_P_x0159__x00ed_jmen_x00ed_='Sesterna' ows_cislo='380761500.000000' />
+   <z:row ows_LinkTitle='Sobotka' ows_Jm_x00e9_no='Ladislav' ows_P_x0159__x00ed_jmen_x00ed_='Technik' ows_Mobil='732143133.000000' />
+   <z:row ows_LinkTitle='vÃ½j. mÃ­sto - Frymburk' ows_P_x0159__x00ed_jmen_x00ed_='Frymburk' ows_cislo='380735171.000000' ows_Mobil='702169821.000000' />
+   <z:row ows_LinkTitle='vÃ½j. mÃ­sto - HornÃ­ PlanÃ¡' ows_P_x0159__x00ed_jmen_x00ed_='HornÃ­ PlanÃ¡' ows_Mobil='721355500.000000' />
+   <z:row ows_LinkTitle='vÃ½j. mÃ­sto - VyÅ¡Å¡Ã­ Brod' ows_P_x0159__x00ed_jmen_x00ed_='VyÅ¡Å¡Ã­ Brod' ows_Mobil='728759101.000000' />
+</rs:data>
+</xml>

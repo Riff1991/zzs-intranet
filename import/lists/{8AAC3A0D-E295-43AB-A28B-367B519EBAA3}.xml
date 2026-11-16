@@ -1,0 +1,41 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+     xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+     xmlns:rs='urn:schemas-microsoft-com:rowset'
+     xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+   <s:ElementType name='row' content='eltOnly' rs:CommandTimeout='30'>
+      <s:AttributeType name='ows_LinkTitleNoMenu' rs:name='PÅÃ­jmenÃ­' rs:number='1'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Jm_x00e9_no' rs:name='JmÃ©no' rs:number='2'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Um_x00ed_st_x011b_n_x00ed_' rs:name='UmÃ­stÄnÃ­' rs:number='3'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Klapka' rs:name='Klapka' rs:number='4'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows__x010c_islo' rs:name='ÄÃ­slo' rs:number='5'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Mobil' rs:name='Mobil' rs:number='6'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+   </s:ElementType>
+</s:Schema>
+<rs:data>
+   <z:row ows_LinkTitleNoMenu='dispeÄink DRNR' ows_Um_x00ed_st_x011b_n_x00ed_='dispeÄink DRNR' ows_Klapka='67' ows__x010c_islo='382207167.000000' />
+   <z:row ows_LinkTitleNoMenu='dispeÄink DRNR' ows_Jm_x00e9_no='SÃ¡dlovÃ¡ Jana' ows_Um_x00ed_st_x011b_n_x00ed_='dispeÄink DRNR' ows_Klapka='67' ows__x010c_islo='382207167.000000' ows_Mobil='724169231.000000' />
+   <z:row ows_LinkTitleNoMenu='FAX' ows_Klapka='44' ows__x010c_islo='382207144.000000' />
+   <z:row ows_LinkTitleNoMenu='Kubinec' ows_Jm_x00e9_no='Jan' ows_Um_x00ed_st_x011b_n_x00ed_='autodoprava' ows_Klapka='19' ows__x010c_islo='382207119.000000' ows_Mobil='601101330.000000' />
+   <z:row ows_LinkTitleNoMenu='MatÄjka' ows_Jm_x00e9_no='Ivana' ows_Um_x00ed_st_x011b_n_x00ed_='administrativnÃ­ pracovnice' ows__x010c_islo='382207131.000000' />
+   <z:row ows_LinkTitleNoMenu='MUDr. ChyskÃ¡' ows_Jm_x00e9_no='Daniela' ows_Um_x00ed_st_x011b_n_x00ed_='VedoucÃ­ lÃ©kaÅ OS' ows_Klapka='30' ows__x010c_islo='382207130.000000' ows_Mobil='737959782.000000' />
+   <z:row ows_LinkTitleNoMenu='MUDr. PÅibÃ¡Å' ows_Jm_x00e9_no='Michal' ows_Um_x00ed_st_x011b_n_x00ed_='lÃ©kaÅ' ows_Klapka='22' ows__x010c_islo='382207122.000000' />
+   <z:row ows_LinkTitleNoMenu='PospÃ­Å¡il' ows_Jm_x00e9_no='Filip' ows_Um_x00ed_st_x011b_n_x00ed_='vedoucÃ­ dopravy' ows_Klapka='37' ows__x010c_islo='382207137.000000' ows_Mobil='724180231.000000' />
+   <z:row ows_LinkTitleNoMenu='SmolovÃ¡' ows_Jm_x00e9_no='Helena' ows_Um_x00ed_st_x011b_n_x00ed_='vrchnÃ­ sestra' ows_Klapka='32' ows__x010c_islo='382207132.000000' ows_Mobil='775184334.000000' />
+   <z:row ows_LinkTitleNoMenu='TjutÄevovÃ¡ ' ows_Jm_x00e9_no='Marie' ows_Um_x00ed_st_x011b_n_x00ed_='dispeÄink ZZS' ows_Klapka='66' ows__x010c_islo='382207166.000000' />
+   <z:row ows_LinkTitleNoMenu='vÃ½j. mÃ­sto - Äimelice' ows_Um_x00ed_st_x011b_n_x00ed_='ZZS Äimelice' ows__x010c_islo='382213870.000000' ows_Mobil='602874790.000000' />
+   <z:row ows_LinkTitleNoMenu='vÃ½j. mÃ­sto - Milevsko' ows_Um_x00ed_st_x011b_n_x00ed_='ZZS Milevsko' ows__x010c_islo='382522274.000000' ows_Mobil='724169232.000000' />
+</rs:data>
+</xml>

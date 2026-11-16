@@ -1,0 +1,41 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+     xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+     xmlns:rs='urn:schemas-microsoft-com:rowset'
+     xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+   <s:ElementType name='row' content='eltOnly' rs:CommandTimeout='30'>
+      <s:AttributeType name='ows_LinkTitleNoMenu' rs:name='PÅÃ­jmenÃ­' rs:number='1'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Jm_x00e9_no' rs:name='JmÃ©no' rs:number='2'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Um_x00ed_st_x011b_n_x00ed_' rs:name='UmÃ­stÄnÃ­' rs:number='3'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Klapka' rs:name='Klapka' rs:number='4'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows__x010c_islo' rs:name='Äislo' rs:number='5'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Mobil' rs:name='Mobil' rs:number='6'>
+         <s:datatype dt:type='float' dt:maxLength='8' />
+      </s:AttributeType>
+   </s:ElementType>
+</s:Schema>
+<rs:data>
+   <z:row ows_Klapka='18.0000000000000' ows__x010c_islo='388385818.000000' />
+   <z:row ows_LinkTitleNoMenu='BÃ¡rtovÃ¡' ows_Jm_x00e9_no='Radka' ows_Um_x00ed_st_x011b_n_x00ed_='administrativnÃ­ pracovnice' ows_Klapka='24.0000000000000' ows__x010c_islo='388385824.000000' />
+   <z:row ows_LinkTitleNoMenu='JungwirthovÃ¡  ' ows_Jm_x00e9_no='Eva' ows_Um_x00ed_st_x011b_n_x00ed_='staniÄnÃ­ sestra' ows_Mobil='606557116.000000' />
+   <z:row ows_LinkTitleNoMenu='MUDr. HeÅman' ows_Jm_x00e9_no='Rudolf' ows_Um_x00ed_st_x011b_n_x00ed_='lÃ©kaÅ' ows_Mobil='724355487.000000' />
+   <z:row ows_LinkTitleNoMenu='MUDr. Choc' ows_Jm_x00e9_no='JiÅÃ­' ows_Um_x00ed_st_x011b_n_x00ed_='VedoucÃ­ lÃ©kaÅ' ows_Klapka='12.0000000000000' ows__x010c_islo='388385812.000000' />
+   <z:row ows_LinkTitleNoMenu='OS Prachatice' ows_Klapka='13.1400000000000' ows__x010c_islo='388385813.000000' />
+   <z:row ows_LinkTitleNoMenu='PetÅek' ows_Jm_x00e9_no='Bohumil' ows_Um_x00ed_st_x011b_n_x00ed_='technik OS' ows_Klapka='22.0000000000000' ows__x010c_islo='388385822.000000' ows_Mobil='720848688.000000' />
+   <z:row ows_LinkTitleNoMenu='Å estÃ¡k, DiS.' ows_Jm_x00e9_no='VÃ¡clav' ows_Um_x00ed_st_x011b_n_x00ed_='vrchnÃ­ NLZP' ows_Klapka='11.0000000000000' ows__x010c_islo='388385811.000000' ows_Mobil='606178413.000000' />
+   <z:row ows_LinkTitleNoMenu='vÃ½j. mÃ­sto - Lhenice' ows_Um_x00ed_st_x011b_n_x00ed_='Lhenice' ows_Mobil='725850657.000000' />
+   <z:row ows_LinkTitleNoMenu='vÃ½j. mÃ­sto - Vacov' ows_Um_x00ed_st_x011b_n_x00ed_='Vacov' ows_Mobil='601375159.000000' />
+   <z:row ows_LinkTitleNoMenu='vÃ½j. mÃ­sto - Vimperk' ows_Um_x00ed_st_x011b_n_x00ed_='Vimperk' ows_Klapka='20.2100000000000' ows__x010c_islo='388402720.000000' ows_Mobil='601375157.000000' />
+   <z:row ows_LinkTitleNoMenu='vÃ½j. mÃ­sto - Volary' ows_Um_x00ed_st_x011b_n_x00ed_='Volary' ows__x010c_islo='388334400.000000' ows_Mobil='607879482.000000' />
+</rs:data>
+</xml>

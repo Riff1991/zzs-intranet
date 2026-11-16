@@ -1,0 +1,35 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+     xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+     xmlns:rs='urn:schemas-microsoft-com:rowset'
+     xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+   <s:ElementType name='row' content='eltOnly' rs:CommandTimeout='30'>
+      <s:AttributeType name='ows_DocIcon' rs:name='Typ' rs:number='1'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_LinkFilename' rs:name='NÃ¡zev' rs:number='2'>
+         <s:datatype dt:type='string' dt:maxLength='512' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Modified' rs:name='ZmÄnÄno' rs:number='3'>
+         <s:datatype dt:type='datetime' dt:maxLength='8' />
+      </s:AttributeType>
+      <s:AttributeType name='ows_Editor' rs:name='ZmÄnil' rs:number='4'>
+         <s:datatype dt:type='string' dt:lookup='true' dt:maxLength='512' />
+      </s:AttributeType>
+   </s:ElementType>
+</s:Schema>
+<rs:data>
+   <z:row ows_DocIcon='doc' ows_LinkFilename='BezpeÄnostnÃ­ incident_hlÃ¡Å¡enÃ­_postup.doc' ows_Modified='2018-05-11 10:25:01' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+   <z:row ows_DocIcon='pptx' ows_LinkFilename='Informace_ÃOOÃ_5_2018.pptx' ows_Modified='2018-07-12 08:57:12' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+   <z:row ows_DocIcon='pptx' ows_LinkFilename='IT DESATERO.pptx' ows_Modified='2018-05-11 10:19:27' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+   <z:row ows_DocIcon='pdf' ows_LinkFilename='Kodex ochrany osobnÃ­ch ÃºdajÅ¯_ZZS JÄK.pdf' ows_Modified='2018-05-11 10:19:50' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+   <z:row ows_DocIcon='doc' ows_LinkFilename='ME04.10_OsobnÃ­ Ãºdaje zamÄstnancÅ¯.doc' ows_Modified='2018-05-16 13:21:05' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+   <z:row ows_DocIcon='pptx' ows_LinkFilename='Prezentace_GDPR_Å¡kolenÃ­ zamÄstnanci.pptx' ows_Modified='2018-05-11 10:18:53' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+   <z:row ows_DocIcon='doc' ows_LinkFilename='pÅÃ­loha Ä.1_SM01.25_Proces pro nahlaÅ¡ovÃ¡nÃ­ Ãºniku dat.doc' ows_Modified='2026-04-29 08:28:48' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='doc' ows_LinkFilename='pÅÃ­loha Ä.2_SM01.25_Proces pro komunikaci s dozorovÃ½m ÃºÅadem.doc' ows_Modified='2026-04-29 08:28:58' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='docx' ows_LinkFilename='pÅÃ­loha Ä.3_SM01.25_Kodex ochrany osobnÃ­ch ÃºdajÅ¯.docx' ows_Modified='2026-04-29 08:29:07' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='doc' ows_LinkFilename='pÅÃ­loha Ä.4_SM01.25_Pravidla prÃ¡ce s dokumenty a daty.doc' ows_Modified='2026-04-29 08:29:14' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='doc' ows_LinkFilename='SM01.25 Ochrana osobniÌch uÌdajÅ¯.doc' ows_Modified='2026-10-02 11:51:33' ows_Editor='198;#MÃ¡lkovÃ¡ Michaela' />
+   <z:row ows_DocIcon='docx' ows_LinkFilename='Souhlas_foto_video.docx' ows_Modified='2018-10-04 07:45:05' ows_Editor='260;#TesaÅÃ­kovÃ¡ Renata' />
+</rs:data>
+</xml>
