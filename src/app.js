@@ -7,7 +7,11 @@ Object.assign(ICON, {
   list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
   link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   addr:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3"/>',
-  chev:'<path d="m9 6 6 6-6 6"/>'
+  chev:'<path d="m9 6 6 6-6 6"/>',
+  steps:'<path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+  pulse:'<path d="M3 12h4l2-6 4 12 2-6h6"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
+  arrow:'<path d="M5 12h14m-5-5 5 5-5 5"/>'
 });
 const svg = (n, extra='') => `<svg viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICON[n]||ICON.file}</svg>`;
 const $ = s => document.querySelector(s);
@@ -94,22 +98,47 @@ function paged(host, rows, draw, step=50){
 const emptyBox = (t, d='') => `<div class="empty"><b>${esc(t)}</b>${esc(d)}</div>`;
 const cnt = l => l.rows.length >= 100 ? '100+' : l.rows.length;
 
+/* ---------- oblasti (dlaždice úvodní stránky) ---------- */
+const AREAS = [
+ {k:'postupy', t:'Pracovní postupy', d:'Návody, postupy a metodické pokyny pro výjezdy', i:'steps',
+  src:[['root','Návody'],['zzs-jh','Pracovní postupy'],['vycvikove-stredisko','First Responder']]},
+ {k:'vzdelavani', t:'Vzdělávání', d:'Kurzy, školení, konference a studijní materiály', i:'cap',
+  src:[['vycvikove-stredisko','Vzdělávací akce'],['vycvikove-stredisko','Oznámení'],['zzs-jh','Vzdělávání'],['krizove-rizeni','Vzdělávací materiál pro MU'],['krizove-rizeni','Cvičení IZS'],['vycvikove-stredisko','Knihovna'],['vycvikove-stredisko','Výzkumná šetření - studenti']]},
+ {k:'provoz', t:'Provoz', d:'Provozní informace, základny, služby a krizové řízení', i:'pulse',
+  src:[['zzs-jh','Provozní záležitosti'],['zzs-jh','Zápisy ze schůží'],['zzs-jh','Provoz JH'],['zzs-jh','Provoz Dačice'],['zzs-jh','Provoz Třeboň'],['zzs-jh','Autoprovoz'],['root','INFORMACE ZZUM'],['root','Rozpis služeb'],['root','Uzavřená oddělení'],['krizove-rizeni','Dokumenty traumatologické havarijní a krizové připravenosti ZZS JčK'],['krizove-rizeni','Kontakty OKR']],
+  ext:[{t:'Dopravní uzavírky',d:'Dopravní info dnes',h:'http://www.dopravniinfodnes.cz/typ-dopravni-uzavirky-a-omezeni/'}]},
+ {k:'predpisy', t:'Předpisy a dokumenty', d:'Vnitřní předpisy, GDPR a sdělení vedení', i:'book',
+  src:[['predpisy','Vnitřní předpisy ZZS JčK'],['predpisy','Oznámení'],['predpisy','Připomínkové řízení'],['root','GDPR'],['root','Ochrana oznamovatele'],['root','Sdělení ředitele ZZS JčK'],['root','Sdělení náměstka léčebné péče ZZS JčK']]},
+ {k:'lide', t:'Lidé a kontakty', d:'Telefonní seznamy, osoby a kontakty na střediska', i:'users',
+  src:[['vycvikove-stredisko','Kontakty VVS']], go:[{t:'Telefonní seznamy',d:'188 kontaktů ze 7 základen',h:'#telefony',i:'phone'},{t:'Osoby a skupiny',d:'Adresář uživatelů intranetu',h:'#lide',i:'users'}]},
+ {k:'zamestnanci', t:'Zaměstnanci a benefity', d:'Mzdy, benefity, odbory a psychosociální podpora', i:'heart',
+  src:[['root','Sdílené dokumenty'],['odbory','Oznámení'],['odbory','Sdílené dokumenty'],['odbory','Odkazy'],['krizove-rizeni','SPIS']]}
+];
+AREAS.forEach(a => { a.lists = a.src.map(([sk, lt]) => { const s = siteBy(sk); return s && s.lists.find(l => l.title === lt); }).filter(Boolean);
+  a.ts = Math.max(0, ...a.lists.flatMap(l => l.rows.map(r => r.ts || 0))); });
+const areaBy = k => AREAS.find(a => a.k === k);
+
 /* ---------- pohledy ---------- */
 function vHome(){
-  const today = new Date().toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const quick = [['#oznameni','Oznámení','Všechny weby','bell',0],['#dokumenty','Dokumenty','Knihovny a soubory','file',0],['#telefony','Telefonní seznamy','Všechny základny','phone',0],
-    ['#lide','Osoby','Adresář zaměstnanců','users',0],['https://mail.zzsjck.cz/','Webmail','Firemní e-mail','mail',1],['http://helpdesk/servlet/HelpdeskOverview?eid=ITHelpdesk&lang=cs&archive=0','HelpDesk','Hlášení na IT','help',1]];
-  const ev = (D.events||[]).slice().sort((a,b)=>b.start.localeCompare(a.start)).slice(0,4);
-  return `<div class="hero"><div><h1>Dobrý den</h1><p>${today.charAt(0).toUpperCase()+today.slice(1)}</p></div></div>
-  <div class="tiles" style="margin-bottom:20px">${quick.map(q=>`<a class="tile ${q[4]?'ext':''}" ${q[4]?A(q[0]):`href="${q[0]}"`}><span class="ico">${svg(q[3])}</span><b>${q[1]}</b><small>${q[2]}</small></a>`).join('')}</div>
-  <div class="grid g-home"><div class="col">
-    <section class="card"><div class="card-h"><h2>Nejnovější oznámení</h2><a class="more" href="#oznameni">Všechna oznámení</a></div>
-      <div class="card-b news">${NEWS.slice(0,8).map(n=>newsRow(n)).join('')}</div></section>
-  </div><div class="col">
-    <section class="card"><div class="card-h"><h2>Weby</h2></div><div class="card-b"><div class="lib" style="grid-template-columns:1fr">
-      ${SITES.map(s=>`<a href="#web-${s.key}"><span class="fi" style="background:var(--brand-soft);color:var(--brand)">${svg(s.key==='root'?'home':s.key==='krizove-rizeni'?'alert':s.key==='odbory'?'users':s.key==='vycvikove-stredisko'?'cap':s.key==='predpisy'?'book':'globe')}</span><span>${esc(s.title)}<br><small style="color:var(--muted);font-weight:400">${s.lists.length} seznamů a knihoven</small></span></a>`).join('')}</div></div></section>
-    <section class="card"><div class="card-h"><h2>Kalendář</h2><a class="more" href="#kalendar">Otevřít</a></div><div class="card-b">${ev.length?ev.map(evItem).join(''):emptyBox('Žádné události')}</div></section>
-  </div></div>`;
+  const h = new Date().getHours(), hello = h < 10 ? 'Dobré ráno' : h < 18 ? 'Dobrý den' : 'Dobrý večer';
+  const quick = [['https://mail.zzsjck.cz/','Webmail','mail'],['http://helpdesk/servlet/HelpdeskOverview?eid=ITHelpdesk&lang=cs&archive=0','HelpDesk IT','help'],['https://dokumentace.zzsjck.local/','Dokumentace ZZS','file']];
+  return `<div class="hub"><h1>${hello}</h1><p class="hub-sub">Co dnes potřebujete?</p>
+  <button class="hub-search" id="hubSearch" aria-label="Hledat v intranetu">${svg('arrow','style="display:none"')}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Hledat postup, dokument, kontakt, oznámení…</span><kbd>Ctrl K</kbd></button></div>
+  <div class="hub-tiles">${AREAS.map(a=>`<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p>${a.ts?`<small>Aktualizováno ${fmtD(a.ts)}</small>`:''}<span class="go">${svg('arrow')}</span></a>`).join('')}</div>
+  <div class="hub-foot"><section><h3>Aktuálně</h3>${NEWS.slice(0,3).map(n=>`<a href="#" data-news="${n.id}" class="hub-news"><b>${esc(n.title)}</b><small>${fmtD(n.ts)} · ${esc(n.site.title)}</small></a>`).join('')}<a class="more" href="#oznameni">Všechna oznámení</a></section>
+  <section><h3>Rychlé odkazy</h3><div class="hub-q">${quick.map(q=>`<a ${A(q[0])}>${svg(q[2])}${q[1]}</a>`).join('')}</div></section></div>`;
+}
+function bindHome(){ $('#hubSearch')?.addEventListener('click', openPal); }
+
+function vArea(a){
+  const news = NEWS.filter(n => a.lists.includes(n.list)).slice(0, 8);
+  const card = (href, icon, title, sub, ext) => `<a ${ext?A(href):`href="${href}"`}><span class="fi" style="background:var(--brand-soft);color:var(--brand)">${svg(icon)}</span><span>${esc(title)}<br><small style="color:var(--muted);font-weight:400">${esc(sub)}</small></span></a>`;
+  return `<div class="hero"><div><div class="crumb"><a href="#domu">Domů</a> / ${esc(a.t)}</div><h1>${esc(a.t)}</h1><p>${esc(a.d)}</p></div></div>
+  <div class="grid g-home"><div class="col"><section class="card"><div class="card-h"><h2>Obsah</h2></div><div class="card-b"><div class="lib">
+    ${(a.go||[]).map(g=>card(g.h,g.i,g.t,g.d)).join('')}
+    ${a.lists.map(l=>card(`#seznam-${l.site.key}-${l.idx}`, KICON[l.ui], l.title, `${l.site.title} · ${cnt(l)} položek`)).join('')}
+    ${(a.ext||[]).map(e=>card(e.h,'road',e.t,e.d,1)).join('')}</div></div></section></div>
+  <div class="col"><section class="card"><div class="card-h"><h2>Poslední změny</h2></div><div class="card-b news">${news.length?news.map(n=>newsRow(n,false)).join(''):emptyBox('Zatím žádná oznámení')}</div></section></div></div>`;
 }
 function evItem(e){
   const d = new Date(e.start);
@@ -251,7 +280,7 @@ $('#mBg').addEventListener('click', e => { if(e.target.id==='mBg') $('#mBg').cla
 document.addEventListener('click', e => { const a = e.target.closest('[data-news]'); if(a){ e.preventDefault(); showNews(+a.dataset.news); } });
 
 /* ---------- navigace a router ---------- */
-const NAV = [['domu','Domů','home'],['oznameni','Oznámení','bell'],['dokumenty','Dokumenty','file'],['kalendar','Kalendář','cal'],['telefony','Telefonní seznamy','phone'],['lide','Osoby a skupiny','users'],['--','Weby'],
+const NAV = [['domu','Domů','home'],...AREAS.map(a=>['oblast-'+a.k,a.t,a.i]),['--','Přehledy'],['oznameni','Oznámení','bell'],['dokumenty','Všechny dokumenty','file'],['kalendar','Kalendář','cal'],['telefony','Telefonní seznamy','phone'],['--','Archiv webů'],
   ...SITES.map(s=>['web-'+s.key, s.title, s.key==='root'?'home':s.key==='krizove-rizeni'?'alert':s.key==='odbory'?'users':s.key==='vycvikove-stredisko'?'cap':s.key==='predpisy'?'book':'globe'])];
 function renderNav(cur){
   $('#nav').innerHTML = NAV.map(n => n[0]==='--' ? `<div class="nav-h">${n[1]}</div>` : `<a href="#${n[0]}" ${cur===n[0]?'aria-current="page"':''}>${svg(n[2])}${esc(n[1])}</a>`).join('');
@@ -259,7 +288,8 @@ function renderNav(cur){
 function route(){
   const k = (location.hash||'#domu').slice(1); let html, bind, cur = 'domu', title = 'Domů';
   let m;
-  if (k==='domu'||k==='') { html = vHome(); }
+  if (k==='domu'||k==='') { html = vHome(); bind = bindHome; }
+  else if ((m = k.match(/^oblast-(.+)$/)) && areaBy(m[1])) { const a = areaBy(m[1]); html = vArea(a); cur = k; title = a.t; }
   else if (k==='oznameni') { html = vNews(); bind = bindNews; cur = k; title = 'Oznámení'; }
   else if (k==='dokumenty') { html = vDocs(); cur = k; title = 'Dokumenty'; }
   else if (k==='kalendar') { html = vCal(); cur = k; title = 'Kalendář'; }
@@ -268,7 +298,7 @@ function route(){
   else if (k==='weby') { html = vWebs(); cur = 'web-root'; title = 'Weby'; }
   else if ((m = k.match(/^web-(.+)$/)) && siteBy(m[1])) { const s = siteBy(m[1]); html = vWeb(s); cur = k; title = s.title; }
   else if ((m = k.match(/^seznam-(.+)-(\d+)$/)) && siteBy(m[1]) && siteBy(m[1]).lists[+m[2]]) { const s = siteBy(m[1]), l = s.lists[+m[2]]; html = vList(s,l); bind = () => bindList(s,l); cur = 'web-'+s.key; title = l.title+' · '+s.title; }
-  else { html = vHome(); }
+  else { html = vHome(); bind = bindHome; }
   renderNav(cur); $('#view').innerHTML = html; bind && bind();
   document.title = (title==='Domů'?'':title+' · ')+'Intranet ZZS JčK'; closeMenu(); window.scrollTo(0,0);
 }
@@ -288,6 +318,7 @@ let IDX = null;
 function buildIndex(){
   const idx = [];
   NAV.filter(n=>n[0]!=='--').forEach(n=>idx.push({g:'Stránky',t:n[1],h:'#'+n[0],i:n[2]}));
+  idx.push({g:'Stránky',t:'Osoby a skupiny',h:'#lide',i:'users'});
   SITES.forEach(s => s.lists.forEach(l => idx.push({g:'Seznamy a knihovny',t:l.title,s:s.title,h:`#seznam-${s.key}-${l.idx}`,i:KICON[l.ui]})));
   NEWS.forEach(n => idx.push({g:'Oznámení',t:n.title,s:fmtD(n.ts),news:n.id,i:'bell'}));
   SITES.forEach(s => s.lists.filter(l=>l.ui==='library'||l.ui==='links').forEach(l => l.rows.forEach(r => idx.push({g:l.ui==='links'?'Odkazy':'Dokumenty',t:r.t,s:l.title,h:r.h,e:1,i:l.ui==='links'?'link':'file'}))));
