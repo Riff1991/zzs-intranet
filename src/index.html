@@ -205,8 +205,8 @@ textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monosp
 .hub-search:hover{border-color:var(--brand)}
 .hub-search svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
 .hub-search span{flex:1}
-.hub-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1180px;width:100%;margin:0}
-.hub-tile{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;flex:0 0 calc((100% - 54px) / 4);gap:8px;padding:26px 22px 22px;min-height:190px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
+.hub-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1000px;width:100%;margin:0}
+.hub-tile{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;flex:0 0 calc((100% - 36px) / 3);gap:8px;padding:26px 22px 22px;min-height:190px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
 .hub-tile:hover{transform:translateY(-3px);border-color:var(--brand);text-decoration:none}
 .hub-tile .ico{width:52px;height:52px;border-radius:15px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin-bottom:8px}
 .hub-tile .ico svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -229,8 +229,11 @@ textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monosp
 .hub-q a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500}
 .hub-q a:hover{background:var(--brand-soft)}
 .hub-q svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:1100px){.hub-tile{flex-basis:calc((100% - 18px) / 2)}}
+@media (max-width:860px){.hub-tile{flex-basis:calc((100% - 18px) / 2)}}
 @media (max-width:640px){.hub h1{font-size:1.7rem;margin-bottom:22px}.is-home .content{padding:28px 16px}.hub-tiles{gap:12px}.hub-tile{flex-basis:100%}.hub-tile{min-height:0;padding:20px}.hub-foot{grid-template-columns:1fr}.hub-search kbd{display:none}}
+.hub-tile .ico{position:relative}
+.hub-tile .badge{position:absolute;top:-8px;right:-10px;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:var(--warn);color:#fff;font:700 .78rem var(--font-d);display:grid;place-items:center;border:2px solid var(--surface)}
+.hub-new{border-color:color-mix(in srgb,var(--brand) 35%,var(--line))}
 </style>
 </head>
 <body>
@@ -386,6 +389,16 @@ function paged(host, rows, draw, step=50){
 const emptyBox = (t, d='') => `<div class="empty"><b>${esc(t)}</b>${esc(d)}</div>`;
 const cnt = l => l.rows.length >= 100 ? '100+' : l.rows.length;
 
+/* ---------- poslední návštěva ---------- */
+const VISIT = (() => {
+  let prev = null;
+  try { prev = sessionStorage.getItem('zzs.prev'); } catch(e) {}
+  if (prev === null) { prev = store.get('lastVisit', null); try { sessionStorage.setItem('zzs.prev', JSON.stringify(prev)); } catch(e) {} store.set('lastVisit', Date.now()); }
+  else prev = JSON.parse(prev);
+  return {prev: prev || (Date.now() - 14*864e5), first: !prev};
+})();
+const newSince = () => NEWS.filter(n => n.ts > VISIT.prev);
+
 /* ---------- oblasti (dlaždice úvodní stránky) ---------- */
 const AREAS = [
  {k:'postupy', t:'Pracovní postupy', d:'Návody, postupy a metodické pokyny pro výjezdy', i:'steps',
@@ -409,10 +422,14 @@ AREAS.forEach(a => { a.lists = a.src.map(([sk, lt]) => { const s = siteBy(sk); r
 const areaBy = k => AREAS.find(a => a.k === k);
 
 /* ---------- pohledy ---------- */
+const HOME_AREAS = ['postupy','vzdelavani','provoz','krizove'];
 function vHome(){
-  const logo = document.querySelector('.brand img').src;
+  const logo = document.querySelector('.brand img').src, nn = newSince().length;
+  const tile = a => `<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p></a>`;
   return `<div class="hub"><img class="hub-logo" src="${logo}" alt=""><h1>Intranet ZZS JčK</h1>
-  <div class="hub-tiles">${AREAS.map(a=>`<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p></a>`).join('')}</div></div>`;
+  <div class="hub-tiles">${HOME_AREAS.map(k=>tile(areaBy(k))).join('')}
+  <a class="hub-tile hub-new" href="#novinky"><span class="ico">${svg('bell')}${nn?`<span class="badge" aria-label="${nn} nových">${nn>99?'99+':nn}</span>`:''}</span><h2>Novinky</h2>
+    <p>${nn?`${nn} ${nn===1?'nová položka':nn<5?'nové položky':'nových položek'} ${VISIT.first?'za posledních 14 dní':'od vaší poslední návštěvy'}`:'Od vaší poslední návštěvy nepřibylo nic nového'}</p></a></div></div>`;
 }
 function bindHome(){}
 
@@ -543,6 +560,15 @@ function bindPeople(){
   $('#oq').addEventListener('input', e => { pq = e.target.value; draw(); }); draw();
 }
 
+/* Novinky od poslední návštěvy */
+function vNovinky(){
+  const rows = newSince();
+  const since = new Date(VISIT.prev).toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'numeric'});
+  return `<div class="hero"><div><div class="crumb"><a href="#domu">Domů</a> / Novinky</div><h1>Novinky</h1><p>${VISIT.first?'Za posledních 14 dní':`Od vaší poslední návštěvy (${since})`}: ${rows.length} ${rows.length===1?'položka':rows.length<5&&rows.length>0?'položky':'položek'}.</p></div><a class="btn sec" href="#oznameni">Všechna oznámení</a></div>
+  <section class="card"><div class="card-b news" id="nvl">${rows.length?'':emptyBox('Nic nového','Od vaší poslední návštěvy nepřibylo žádné oznámení.')}</div></section>`;
+}
+function bindNovinky(){ const r = newSince(); if(r.length) paged($('#nvl'), r, n=>newsRow(n)); }
+
 /* Kalendář */
 function vCal(){
   const ev = (D.events||[]).slice().sort((a,b)=>b.start.localeCompare(a.start));
@@ -566,7 +592,7 @@ $('#mBg').addEventListener('click', e => { if(e.target.id==='mBg') $('#mBg').cla
 document.addEventListener('click', e => { const a = e.target.closest('[data-news]'); if(a){ e.preventDefault(); showNews(+a.dataset.news); } });
 
 /* ---------- navigace a router ---------- */
-const NAV = [['domu','Domů','home'],...AREAS.map(a=>['oblast-'+a.k,a.t,a.i]),['--','Přehledy'],['oznameni','Oznámení','bell'],['dokumenty','Všechny dokumenty','file'],['kalendar','Kalendář','cal'],['telefony','Telefonní seznamy','phone'],['--','Archiv webů'],
+const NAV = [['domu','Domů','home'],['novinky','Novinky','bell'],...AREAS.map(a=>['oblast-'+a.k,a.t,a.i]),['--','Přehledy'],['oznameni','Oznámení','bell'],['dokumenty','Všechny dokumenty','file'],['kalendar','Kalendář','cal'],['telefony','Telefonní seznamy','phone'],['--','Archiv webů'],
   ...SITES.map(s=>['web-'+s.key, s.title, s.key==='root'?'home':s.key==='krizove-rizeni'?'alert':s.key==='odbory'?'users':s.key==='vycvikove-stredisko'?'cap':s.key==='predpisy'?'book':'globe'])];
 function renderNav(cur){
   $('#nav').innerHTML = NAV.map(n => n[0]==='--' ? `<div class="nav-h">${n[1]}</div>` : `<a href="#${n[0]}" ${cur===n[0]?'aria-current="page"':''}>${svg(n[2])}${esc(n[1])}</a>`).join('');
@@ -576,6 +602,7 @@ function route(){
   let m;
   if (k==='domu'||k==='') { html = vHome(); bind = bindHome; }
   else if ((m = k.match(/^oblast-(.+)$/)) && areaBy(m[1])) { const a = areaBy(m[1]); html = vArea(a); cur = k; title = a.t; }
+  else if (k==='novinky') { html = vNovinky(); bind = bindNovinky; cur = k; title = 'Novinky'; }
   else if (k==='oznameni') { html = vNews(); bind = bindNews; cur = k; title = 'Oznámení'; }
   else if (k==='dokumenty') { html = vDocs(); cur = k; title = 'Dokumenty'; }
   else if (k==='kalendar') { html = vCal(); cur = k; title = 'Kalendář'; }
