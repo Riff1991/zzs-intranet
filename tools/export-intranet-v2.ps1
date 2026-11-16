@@ -58,7 +58,12 @@ try {
     foreach ($w in $x.Envelope.Body.GetAllSubWebCollectionResponse.GetAllSubWebCollectionResult.Webs.Web) {
         $webs.Add([pscustomobject]@{ Title = $w.Title; Url = ([string]$w.Url).TrimEnd('/') })
     }
-} catch { $log.Add("CHYBA weby: $($_.Exception.Message)") }
+} catch {
+    $log.Add("CHYBA weby (Webs.asmx vyžaduje vyšší oprávnění), použiji známé podwebe: $($_.Exception.Message)")
+    foreach ($sw in @(@('Vnitřní předpisy ZZS JčK','dokumenty'), @('Krizové řízení','krizoverizeni'), @('Odbory','odbory'), @('Výcvikové středisko','vycvikove_stredisko'), @('ZZS JH','zzsjh'))) {
+        $webs.Add([pscustomobject]@{ Title = $sw[0]; Url = ($Base.TrimEnd('/') + '/' + $sw[1]) })
+    }
+}
 Write-Host ("Webů: {0}" -f $webs.Count)
 
 # 2) Seznamy a knihovny každého webu, 3) všechny položky
