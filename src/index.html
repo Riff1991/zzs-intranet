@@ -201,8 +201,8 @@ textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monosp
 .hub-search:hover{border-color:var(--brand)}
 .hub-search svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
 .hub-search span{flex:1}
-.hub-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:1040px;margin:0 auto 36px}
-.hub-tile{position:relative;display:flex;flex-direction:column;gap:8px;padding:28px 26px 24px;min-height:210px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
+.hub-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;max-width:1180px;margin:0 auto 36px}
+.hub-tile{position:relative;display:flex;flex-direction:column;gap:8px;padding:26px 22px 22px;min-height:220px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
 .hub-tile:hover{transform:translateY(-3px);border-color:var(--brand);text-decoration:none}
 .hub-tile .ico{width:52px;height:52px;border-radius:15px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin-bottom:8px}
 .hub-tile .ico svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -225,7 +225,7 @@ textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monosp
 .hub-q a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500}
 .hub-q a:hover{background:var(--brand-soft)}
 .hub-q svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:1020px){.hub-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1100px){.hub-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.hub h1{font-size:1.7rem}.hub-tiles{grid-template-columns:1fr;gap:12px}.hub-tile{min-height:0;padding:20px}.hub-foot{grid-template-columns:1fr}.hub-search kbd{display:none}}
 </style>
 </head>
@@ -388,9 +388,11 @@ const AREAS = [
   src:[['root','Návody'],['zzs-jh','Pracovní postupy'],['vycvikove-stredisko','First Responder']]},
  {k:'vzdelavani', t:'Vzdělávání', d:'Kurzy, školení, konference a studijní materiály', i:'cap',
   src:[['vycvikove-stredisko','Vzdělávací akce'],['vycvikove-stredisko','Oznámení'],['zzs-jh','Vzdělávání'],['krizove-rizeni','Vzdělávací materiál pro MU'],['krizove-rizeni','Cvičení IZS'],['vycvikove-stredisko','Knihovna'],['vycvikove-stredisko','Výzkumná šetření - studenti']]},
- {k:'provoz', t:'Provoz', d:'Provozní informace, základny, služby a krizové řízení', i:'pulse',
-  src:[['zzs-jh','Provozní záležitosti'],['zzs-jh','Zápisy ze schůží'],['zzs-jh','Provoz JH'],['zzs-jh','Provoz Dačice'],['zzs-jh','Provoz Třeboň'],['zzs-jh','Autoprovoz'],['root','INFORMACE ZZUM'],['root','Rozpis služeb'],['root','Uzavřená oddělení'],['krizove-rizeni','Dokumenty traumatologické havarijní a krizové připravenosti ZZS JčK'],['krizove-rizeni','Kontakty OKR']],
+ {k:'provoz', t:'Provoz', d:'Provozní informace, základny, služby a rozpisy', i:'pulse',
+  src:[['zzs-jh','Provozní záležitosti'],['zzs-jh','Zápisy ze schůží'],['zzs-jh','Provoz JH'],['zzs-jh','Provoz Dačice'],['zzs-jh','Provoz Třeboň'],['zzs-jh','Autoprovoz'],['root','INFORMACE ZZUM'],['root','Rozpis služeb'],['root','Uzavřená oddělení']],
   ext:[{t:'Dopravní uzavírky',d:'Dopravní info dnes',h:'http://www.dopravniinfodnes.cz/typ-dopravni-uzavirky-a-omezeni/'}]},
+ {k:'krizove', t:'Krizové řízení', d:'Havarijní připravenost, cvičení IZS a krizové plány', i:'alert',
+  src:[['krizove-rizeni','Dokumenty traumatologické havarijní a krizové připravenosti ZZS JčK'],['krizove-rizeni','Cvičení IZS'],['krizove-rizeni','Kontakty OKR']]},
  {k:'predpisy', t:'Předpisy a dokumenty', d:'Vnitřní předpisy, GDPR a sdělení vedení', i:'book',
   src:[['predpisy','Vnitřní předpisy ZZS JčK'],['predpisy','Oznámení'],['predpisy','Připomínkové řízení'],['root','GDPR'],['root','Ochrana oznamovatele'],['root','Sdělení ředitele ZZS JčK'],['root','Sdělení náměstka léčebné péče ZZS JčK']]},
  {k:'lide', t:'Lidé a kontakty', d:'Telefonní seznamy, osoby a kontakty na střediska', i:'users',
