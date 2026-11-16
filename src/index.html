@@ -194,15 +194,19 @@ textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monosp
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{.side,.top{display:none}.app{display:block}}
 
-.hub{max-width:760px;margin:12px auto 28px;text-align:center}
-.hub h1{font-size:2.3rem;font-weight:800}
+.hub{max-width:1180px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 0 20px}
+.hub-logo{width:76px;height:auto;margin-bottom:4px}
+.hub h1{font-size:2.4rem;font-weight:800;margin-bottom:34px}
+.is-home .side,.is-home .top,.is-home .scrim{display:none}
+.is-home .app{grid-template-columns:1fr}
+.is-home .content{max-width:1240px;padding:6vh 28px 40px}
 .hub-sub{margin:6px 0 20px;color:var(--muted);font-size:1.1rem}
 .hub-search{display:flex;align-items:center;gap:12px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 20px;color:var(--muted);text-align:left;font-size:1.02rem;box-shadow:var(--shadow)}
 .hub-search:hover{border-color:var(--brand)}
 .hub-search svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
 .hub-search span{flex:1}
-.hub-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;max-width:1180px;margin:0 auto 36px}
-.hub-tile{position:relative;display:flex;flex-direction:column;gap:8px;padding:26px 22px 22px;min-height:220px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
+.hub-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1180px;width:100%;margin:0}
+.hub-tile{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;flex:0 0 calc((100% - 54px) / 4);gap:8px;padding:26px 22px 22px;min-height:190px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
 .hub-tile:hover{transform:translateY(-3px);border-color:var(--brand);text-decoration:none}
 .hub-tile .ico{width:52px;height:52px;border-radius:15px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin-bottom:8px}
 .hub-tile .ico svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -225,8 +229,8 @@ textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monosp
 .hub-q a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500}
 .hub-q a:hover{background:var(--brand-soft)}
 .hub-q svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:1100px){.hub-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:640px){.hub h1{font-size:1.7rem}.hub-tiles{grid-template-columns:1fr;gap:12px}.hub-tile{min-height:0;padding:20px}.hub-foot{grid-template-columns:1fr}.hub-search kbd{display:none}}
+@media (max-width:1100px){.hub-tile{flex-basis:calc((100% - 18px) / 2)}}
+@media (max-width:640px){.hub h1{font-size:1.7rem;margin-bottom:22px}.is-home .content{padding:28px 16px}.hub-tiles{gap:12px}.hub-tile{flex-basis:100%}.hub-tile{min-height:0;padding:20px}.hub-foot{grid-template-columns:1fr}.hub-search kbd{display:none}}
 </style>
 </head>
 <body>
@@ -406,15 +410,11 @@ const areaBy = k => AREAS.find(a => a.k === k);
 
 /* ---------- pohledy ---------- */
 function vHome(){
-  const h = new Date().getHours(), hello = h < 10 ? 'Dobré ráno' : h < 18 ? 'Dobrý den' : 'Dobrý večer';
-  const quick = [['https://mail.zzsjck.cz/','Webmail','mail'],['http://helpdesk/servlet/HelpdeskOverview?eid=ITHelpdesk&lang=cs&archive=0','HelpDesk IT','help'],['https://dokumentace.zzsjck.local/','Dokumentace ZZS','file']];
-  return `<div class="hub"><h1>${hello}</h1><p class="hub-sub">Co dnes potřebujete?</p>
-  <button class="hub-search" id="hubSearch" aria-label="Hledat v intranetu">${svg('arrow','style="display:none"')}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Hledat postup, dokument, kontakt, oznámení…</span><kbd>Ctrl K</kbd></button></div>
-  <div class="hub-tiles">${AREAS.map(a=>`<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p>${a.ts?`<small>Aktualizováno ${fmtD(a.ts)}</small>`:''}<span class="go">${svg('arrow')}</span></a>`).join('')}</div>
-  <div class="hub-foot"><section><h3>Aktuálně</h3>${NEWS.slice(0,3).map(n=>`<a href="#" data-news="${n.id}" class="hub-news"><b>${esc(n.title)}</b><small>${fmtD(n.ts)} · ${esc(n.site.title)}</small></a>`).join('')}<a class="more" href="#oznameni">Všechna oznámení</a></section>
-  <section><h3>Rychlé odkazy</h3><div class="hub-q">${quick.map(q=>`<a ${A(q[0])}>${svg(q[2])}${q[1]}</a>`).join('')}</div></section></div>`;
+  const logo = document.querySelector('.brand img').src;
+  return `<div class="hub"><img class="hub-logo" src="${logo}" alt=""><h1>Intranet ZZS JčK</h1>
+  <div class="hub-tiles">${AREAS.map(a=>`<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p></a>`).join('')}</div></div>`;
 }
-function bindHome(){ $('#hubSearch')?.addEventListener('click', openPal); }
+function bindHome(){}
 
 function vArea(a){
   const news = NEWS.filter(n => a.lists.includes(n.list)).slice(0, 8);
@@ -585,6 +585,7 @@ function route(){
   else if ((m = k.match(/^web-(.+)$/)) && siteBy(m[1])) { const s = siteBy(m[1]); html = vWeb(s); cur = k; title = s.title; }
   else if ((m = k.match(/^seznam-(.+)-(\d+)$/)) && siteBy(m[1]) && siteBy(m[1]).lists[+m[2]]) { const s = siteBy(m[1]), l = s.lists[+m[2]]; html = vList(s,l); bind = () => bindList(s,l); cur = 'web-'+s.key; title = l.title+' · '+s.title; }
   else { html = vHome(); bind = bindHome; }
+  document.body.classList.toggle('is-home', html.startsWith('<div class="hub">'));
   renderNav(cur); $('#view').innerHTML = html; bind && bind();
   document.title = (title==='Domů'?'':title+' · ')+'Intranet ZZS JčK'; closeMenu(); window.scrollTo(0,0);
 }

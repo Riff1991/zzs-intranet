@@ -122,15 +122,11 @@ const areaBy = k => AREAS.find(a => a.k === k);
 
 /* ---------- pohledy ---------- */
 function vHome(){
-  const h = new Date().getHours(), hello = h < 10 ? 'Dobré ráno' : h < 18 ? 'Dobrý den' : 'Dobrý večer';
-  const quick = [['https://mail.zzsjck.cz/','Webmail','mail'],['http://helpdesk/servlet/HelpdeskOverview?eid=ITHelpdesk&lang=cs&archive=0','HelpDesk IT','help'],['https://dokumentace.zzsjck.local/','Dokumentace ZZS','file']];
-  return `<div class="hub"><h1>${hello}</h1><p class="hub-sub">Co dnes potřebujete?</p>
-  <button class="hub-search" id="hubSearch" aria-label="Hledat v intranetu">${svg('arrow','style="display:none"')}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Hledat postup, dokument, kontakt, oznámení…</span><kbd>Ctrl K</kbd></button></div>
-  <div class="hub-tiles">${AREAS.map(a=>`<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p>${a.ts?`<small>Aktualizováno ${fmtD(a.ts)}</small>`:''}<span class="go">${svg('arrow')}</span></a>`).join('')}</div>
-  <div class="hub-foot"><section><h3>Aktuálně</h3>${NEWS.slice(0,3).map(n=>`<a href="#" data-news="${n.id}" class="hub-news"><b>${esc(n.title)}</b><small>${fmtD(n.ts)} · ${esc(n.site.title)}</small></a>`).join('')}<a class="more" href="#oznameni">Všechna oznámení</a></section>
-  <section><h3>Rychlé odkazy</h3><div class="hub-q">${quick.map(q=>`<a ${A(q[0])}>${svg(q[2])}${q[1]}</a>`).join('')}</div></section></div>`;
+  const logo = document.querySelector('.brand img').src;
+  return `<div class="hub"><img class="hub-logo" src="${logo}" alt=""><h1>Intranet ZZS JčK</h1>
+  <div class="hub-tiles">${AREAS.map(a=>`<a class="hub-tile" href="#oblast-${a.k}"><span class="ico">${svg(a.i)}</span><h2>${esc(a.t)}</h2><p>${esc(a.d)}</p></a>`).join('')}</div></div>`;
 }
-function bindHome(){ $('#hubSearch')?.addEventListener('click', openPal); }
+function bindHome(){}
 
 function vArea(a){
   const news = NEWS.filter(n => a.lists.includes(n.list)).slice(0, 8);
@@ -301,6 +297,7 @@ function route(){
   else if ((m = k.match(/^web-(.+)$/)) && siteBy(m[1])) { const s = siteBy(m[1]); html = vWeb(s); cur = k; title = s.title; }
   else if ((m = k.match(/^seznam-(.+)-(\d+)$/)) && siteBy(m[1]) && siteBy(m[1]).lists[+m[2]]) { const s = siteBy(m[1]), l = s.lists[+m[2]]; html = vList(s,l); bind = () => bindList(s,l); cur = 'web-'+s.key; title = l.title+' · '+s.title; }
   else { html = vHome(); bind = bindHome; }
+  document.body.classList.toggle('is-home', html.startsWith('<div class="hub">'));
   renderNav(cur); $('#view').innerHTML = html; bind && bind();
   document.title = (title==='Domů'?'':title+' · ')+'Intranet ZZS JčK'; closeMenu(); window.scrollTo(0,0);
 }
