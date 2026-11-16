@@ -1,0 +1,2 @@
+CHYBA weby: Vzdálený server vrátil chybu: (401) Neověřeno.
+SeznamĹŻ: 19
