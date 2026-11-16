@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intranet ZZS JčK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: pevný levý panel s navigací, obsah v jednom sloupci s kartami; paleta z loga (modrá, zelená, slunce). */
+:root{
+  --bg:#f3f6f9; --surface:#ffffff; --ink:#142431; --muted:#5b6c7a; --line:#dde5ec;
+  --brand:#0b5a8e; --brand-soft:#e4f0f8; --brand-ink:#ffffff;
+  --accent:#2c9a5c; --sun:#f0b400; --warn:#b4540a; --warn-soft:#fdf0e3;
+  --font-d:'Manrope',system-ui,sans-serif; --font-b:'IBM Plex Sans',system-ui,sans-serif;
+  --r:14px; --shadow:0 1px 2px rgba(20,36,49,.06),0 6px 20px rgba(20,36,49,.05);
+  --fs:16px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1a24; --surface:#152633; --ink:#e7eff5; --muted:#9db0bf; --line:#25394a;
+  --brand:#5eb2e8; --brand-soft:#16384f; --brand-ink:#08202f; --accent:#4cc487; --sun:#f5c63a; --warn:#f0a35e; --warn-soft:#3a2a17;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1a24; --surface:#152633; --ink:#e7eff5; --muted:#9db0bf; --line:#25394a;
+  --brand:#5eb2e8; --brand-soft:#16384f; --brand-ink:#08202f; --accent:#4cc487; --sun:#f5c63a; --warn:#f0a35e; --warn-soft:#3a2a17;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.25); color-scheme:dark}
+:root[data-a11y="on"]{--fs:19px;--line:#8aa0b1;--muted:#33475a}
+:root[data-a11y="on"][data-theme="dark"]{--muted:#c5d3de;--line:#5d7a91}
+@media (prefers-color-scheme:dark){:root[data-a11y="on"]:not([data-theme="light"]){--muted:#c5d3de;--line:#5d7a91}}
+:root[data-a11y="on"] a{text-decoration:underline}
+:root[data-a11y="on"] *{letter-spacing:.01em}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-b);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--brand);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-family:var(--font-d);line-height:1.2;margin:0;text-wrap:balance}
+.skip{position:absolute;left:-999px;top:8px;background:var(--brand);color:var(--brand-ink);padding:8px 14px;border-radius:8px;z-index:100}
+.skip:focus{left:8px}
+
+.app{display:grid;grid-template-columns:272px 1fr;min-height:100%}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px;text-decoration:none;color:var(--ink)}
+.brand img{width:40px;height:auto}
+.brand b{font-family:var(--font-d);font-size:1.05rem;display:block;line-height:1.1}
+.brand small{color:var(--muted);font-size:.78rem}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-h{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:12px 12px 4px;font-weight:600}
+.nav a{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500;font-size:.95rem}
+.nav a:hover{background:var(--brand-soft)}
+.nav a[aria-current="page"]{background:var(--brand);color:var(--brand-ink)}
+.nav svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.side-foot{margin-top:auto;font-size:.8rem;color:var(--muted);padding:0 8px}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 28px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.ib.burger{display:none}
+.search{flex:1;max-width:560px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 14px;color:var(--muted);text-align:left}
+.search:hover{border-color:var(--brand)}
+.search svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
+.search{min-width:0}.search span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+kbd{font:500 .72rem var(--font-b);border:1px solid var(--line);border-radius:6px;padding:1px 6px;background:var(--bg)}
+.tools{margin-left:auto;display:flex;gap:8px;align-items:center;flex:none}
+.ib{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-size:.88rem;font-weight:500;text-decoration:none;color:var(--ink)}
+.ib:hover{border-color:var(--brand);text-decoration:none}
+.ib svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ib[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.ib.pri{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+
+.content{padding:28px;max-width:1240px;width:100%;margin:0 auto}
+.hero{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:22px}
+.hero h1{font-size:1.9rem;font-weight:800}
+.hero p{margin:4px 0 0;color:var(--muted)}
+.crumb{font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.grid{display:grid;gap:20px}
+.g-home{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px 0}
+.card-h h2{font-size:1.08rem;font-weight:700}
+.card-b{padding:12px 20px 18px}
+.more{font-size:.86rem;font-weight:500;white-space:nowrap}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.tile{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+.tile:hover{transform:translateY(-2px);border-color:var(--brand);text-decoration:none}
+.tile .ico{width:38px;height:38px;border-radius:11px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center}
+.tile .ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tile b{font-family:var(--font-d);font-size:.95rem;line-height:1.25}
+.tile small{color:var(--muted);font-size:.8rem;line-height:1.3}
+.tile.ext .ico{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+
+.news{display:flex;flex-direction:column}
+.item{padding:16px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0;padding-top:6px}
+.item-t{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+.item h3{font-size:1rem;font-weight:700}
+.meta{font-size:.82rem;color:var(--muted);margin-top:2px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.item p{margin:8px 0 0;font-size:.94rem;max-width:70ch}
+.item .row{display:flex;gap:12px;margin-top:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--brand-soft);color:var(--brand)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2}
+.tgl{background:none;border:0;padding:0;color:var(--brand);font-weight:500;font-size:.86rem}
+.tgl:hover{text-decoration:underline}
+
+.ev{display:flex;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+.ev:first-child{border-top:0}
+.date{flex:none;width:52px;text-align:center;border-radius:12px;background:var(--brand-soft);color:var(--brand);padding:6px 0;line-height:1}
+.date b{display:block;font:800 1.4rem var(--font-d)}
+.date span{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.ev h3{font-size:.96rem}
+.ev p{margin:2px 0 0;font-size:.88rem;color:var(--muted)}
+
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:8px 10px;font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--brand-soft)}
+td a{font-weight:500}
+.fi{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font:700 .62rem var(--font-d);letter-spacing:.02em;color:#fff;flex:none}
+.fi.folder{background:var(--sun);color:#3d2c00}
+.fi.xlsx{background:#1f7a46}.fi.docx{background:#2a5db0}.fi.pdf{background:#c0392b}
+.fi svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.nm{display:flex;align-items:center;gap:12px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.field{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;font:inherit;color:var(--ink);min-width:0}
+.field:focus{outline:3px solid var(--sun);outline-offset:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 13px;font-size:.85rem;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-family:var(--font-d);margin-bottom:4px}
+
+.cal-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.cal-h h2{font-size:1.2rem;margin-right:auto;text-transform:capitalize}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cal .dh{padding:8px;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg);text-align:center;font-weight:600}
+.cal .d{min-height:92px;border-top:1px solid var(--line);border-left:1px solid var(--line);padding:6px;font-size:.82rem;display:flex;flex-direction:column;gap:4px;min-width:0;background:var(--surface)}
+.cal .d:nth-child(7n+8){border-left:0}
+.cal .d.o{background:var(--bg);color:var(--muted)}
+.cal .d.t .n{background:var(--brand);color:var(--brand-ink)}
+.cal .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:.8rem}
+.cal .e{background:var(--brand-soft);color:var(--brand);border-left:3px solid var(--brand);border-radius:5px;padding:2px 6px;font-size:.76rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;border-top:0;border-right:0;border-bottom:0}
+.cal .e.l{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);border-left-color:var(--accent)}
+
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.lib a{display:flex;gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:500;font-size:.95rem}
+.lib a:hover{border-color:var(--brand);text-decoration:none}
+.lib .fi{width:36px;height:36px}
+.note{display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--warn-soft);color:var(--ink);font-size:.9rem;border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+.note svg{width:20px;height:20px;flex:none;stroke:var(--warn);fill:none;stroke-width:2;margin-top:2px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--brand);background:var(--brand);color:var(--brand-ink);border-radius:10px;padding:9px 16px;font-weight:600;font-size:.9rem;text-decoration:none}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.sec{background:transparent;color:var(--brand)}
+textarea.field{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monospace;font-size:.82rem}
+
+.pal-bg{position:fixed;inset:0;background:rgba(8,18,26,.5);display:none;align-items:flex-start;justify-content:center;padding:12vh 16px 16px;z-index:60}
+.pal-bg.on{display:flex}
+.pal{width:100%;max-width:620px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
+.pal input{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;padding:16px 20px;font:inherit;font-size:1.05rem;color:var(--ink)}
+.pal input:focus{outline:none}
+.pal ul{list-style:none;margin:0;padding:6px;max-height:50vh;overflow-y:auto}
+.pal li a{display:flex;gap:12px;align-items:center;padding:9px 12px;border-radius:9px;color:var(--ink);text-decoration:none}
+.pal li a:hover,.pal li a.sel{background:var(--brand-soft);text-decoration:none}
+.pal li small{margin-left:auto;color:var(--muted);font-size:.76rem;white-space:nowrap}
+.pal .grp{padding:8px 12px 2px;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.scrim{display:none}
+
+@media (max-width:1020px){
+  .g-home{grid-template-columns:1fr}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;left:0;top:0;bottom:0;width:284px;z-index:50;transform:translateX(-100%);transition:transform .2s}
+  .side.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.3)}
+  .scrim.on{display:block;position:fixed;inset:0;background:rgba(8,18,26,.45);z-index:40}
+  .ib.burger{display:inline-flex}
+  .top{padding:10px 16px;gap:8px}
+  .ib{padding:8px 10px}
+  .tools{gap:6px}
+  .content{padding:20px 16px}
+  .search kbd,.ib .lbl{display:none}
+  .hero h1{font-size:1.5rem}
+  .cal .d{min-height:64px;padding:4px}
+  .cal .e{font-size:0;padding:0;height:6px;border-radius:3px;border-left-width:0;background:var(--brand)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.side,.top{display:none}.app{display:block}}
+</style>
+</head>
+<body>
+<a class="skip" href="#view">Přejít k hlavnímu obsahu</a>
+<div class="app">
+  <aside class="side" id="side" aria-label="Hlavní navigace">
+    <a class="brand" href="#domu"><img alt="" src="data:image/png;base64,__LOGO__"><span><b>Intranet</b><small>ZZS Jihočeského kraje</small></span></a>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">Interní systém pro zaměstnance ZZS JčK.</div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="main">
+    <header class="top">
+      <button class="ib burger" id="burger" aria-label="Otevřít menu" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <button class="search" id="openSearch" aria-label="Hledat v intranetu"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Hledat dokumenty, oznámení, kontakty…</span><kbd>Ctrl K</kbd></button>
+      <div class="tools">
+        <button class="ib" id="a11y" aria-pressed="false" title="Větší písmo a vyšší kontrast"><svg viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="1.8"/><path d="M5 8.5h14M12 8.5V14m0 0-3 6m3-6 3 6"/></svg><span class="lbl">Usnadnění</span></button>
+        <button class="ib" id="theme" aria-label="Přepnout tmavý režim" title="Světlý / tmavý režim"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+        <a class="ib pri" href="http://intranet.zzsjck.local/_layouts/Authenticate.aspx?Source=/default.aspx" target="_blank" rel="noopener">Přihlásit</a>
+      </div>
+    </header>
+    <main class="content" id="view" tabindex="-1"></main>
+  </div>
+</div>
+
+<div class="pal-bg" id="palBg" role="dialog" aria-modal="true" aria-label="Hledání">
+  <div class="pal">
+    <input id="palIn" type="text" placeholder="Co hledáte?" autocomplete="off" aria-label="Hledaný výraz">
+    <ul id="palList"></ul>
+  </div>
+</div>
+
+<script>
+const DOCS = __DOCS__;
+const BASE = 'http://intranet.zzsjck.local';
+const L = p => BASE + '/' + p.split('/').map(s => encodeURIComponent(s).replace(/%2C/g, ',')).join('/');
+const ICON = {
+  home:'<path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10"/>',
+  file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h6"/>',
+  shield:'<path d="M12 3 4.5 6v5.5c0 4.5 3 8 7.5 9.5 4.5-1.5 7.5-5 7.5-9.5V6L12 3Z"/>',
+  alert:'<path d="M12 3 2.5 20h19L12 3Zm0 6v5m0 3v.01"/>',
+  users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5.3a3.2 3.2 0 0 1 0 5.9M21 20c0-2.6-1.6-4.8-4-5.6"/>',
+  cap:'<path d="m2 9 10-5 10 5-10 5L2 9Zm4 2.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/>',
+  bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16Zm4 4h4"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4m8-4v4"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.01"/>',
+  road:'<path d="M8 3 4 21M16 3l4 18M12 4v3m0 4v3m0 4v2"/>',
+  book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Zm0 16A2.5 2.5 0 0 1 6.5 19H20"/>',
+  clip:'<path d="m20 11-8.5 8.5a5 5 0 0 1-7-7L13 4a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4L14 7"/>',
+  folder:'<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4l2 2.5h9A1.5 1.5 0 0 1 21 9v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V6.5Z"/>',
+  poll:'<path d="M5 20V10m7 10V4m7 16v-7"/>',
+  person:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/>',
+  warn:'<path d="M12 3 2.5 20h19L12 3Zm0 6v5m0 3v.01"/>',
+  ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
+};
+const svg = (n, extra='') => `<svg viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICON[n]}</svg>`;
+
+const NEWS = [
+ {id:721,title:'ME01.01 ECPR protokol',author:'Papoušek René',date:'2026-11-03T19:19',attach:true,
+  text:'Upozorňuji na nový metodický pokyn ME01.01 ECPR protokol. Zkrácená verze ECPR checklist v příloze. Rovněž tak v tabletu MobileDoc-Dokumenty-Pracovní postupy/Návody',tag:'Metodika'},
+ {id:720,title:'Kredity stravenková karta Pluxee, expirace 31. 12. 2026',author:'Tesaříková Renata',date:'2026-10-23T10:19',attach:false,
+  text:'Vážení, dovoluji si Vás upozornit na expiraci kreditů na Vašich stravenkových kartách Pluxee. Kredity expirují k 31. 12. 2026. Prosím o kontrolu zůstatku kreditů na Vaší stravenkové kartě Pluxee a vyčerpání kreditů do 31. 12. 2026. Výši Vašeho kreditu…',trunc:true,tag:'Benefity',warn:true},
+ {id:719,title:'Nabídka BANDI: mimořádná 50% sleva na vybrané pánské obleky',author:'Fialová Lucie',date:'2026-10-21T10:03',attach:true,
+  text:'Značka BANDI připravila pro příslušníky a zaměstnance složek IZS a dalších bezpečnostních složek slevu 50 % na vybrané pánské obleky. Nabídka platí v listopadu a prosinci 2026. Více informací naleznete v přílohách.',tag:'Benefity'},
+ {id:716,title:'Nový hlavní tiskový mluvčí ZZS JčK: Václav Burian',author:'Fialová Lucie',date:'2026-10-14T13:42',attach:false,
+  text:'Vážené kolegyně, vážení kolegové, od 1. října se role hlavního tiskového mluvčího Zdravotnické záchranné služby Jihočeského kraje ujímá Václav Burian, který k nám přichází po dlouholetém působení v médiích. Své dosavadní zkušenosti nyní využije při prezentaci…',trunc:true,tag:'Organizace'},
+ {id:715,title:'Výběrové řízení: Zdravotnický/á záchranář/ka Letecké záchranné služby',author:'Kubešová Marcela',date:'2026-10-14T10:41',attach:true,
+  text:'Zdravotnická záchranná služba Jihočeského kraje vypisuje výběrové řízení na obsazení pracovní pozice „Zdravotnický/á záchranář/ka v posádce Letecké záchranné služby“. Bližší informace v příloze.',tag:'Nábor'}
+].map(n=>({...n,href:BASE+'/Lists/Oznmen/DispForm.aspx?ID='+n.id}));
+
+const EVENTS = [
+ {id:299,date:'2026-11-14',title:'Dovolená Lenka Dvořáková',text:'Během čerpání dovolené prosím urgentní záležitosti řešit s Martinou Dupalovou. Děkuji',href:BASE+'/Lists/Kalend/DispForm.aspx?ID=299'}
+];
+
+const LIBS = [
+ {t:'Vnitřní předpisy ZZS JčK',h:BASE+'/dokumenty/default.aspx',i:'book'},
+ {t:'GDPR',h:L('GDPR/Forms/AllItems.aspx'),i:'shield'},
+ {t:'Ochrana oznamovatele',h:L('Ochrana oznamovatele/Forms/AllItems.aspx'),i:'shield'},
+ {t:'Návody',h:L('Nvody/Forms/AllItems.aspx'),i:'help'},
+ {t:'Rozpis služeb',h:L('Rozpis slueb/Forms/AllItems.aspx'),i:'cal'},
+ {t:'Uzavřená oddělení',h:L('Lists/Uzaven oddlen/AllItems.aspx'),i:'folder'},
+ {t:'Sdělení ředitele ZZS JčK',h:L('Dokumenty  Sdlen editele ZZS JK/Forms/AllItems.aspx'),i:'file'},
+ {t:'Sdělení náměstka léčebné péče ZZS JčK',h:L('Sdlen nmstka lkask pe ZZS JK/Forms/AllItems.aspx'),i:'file'},
+ {t:'INFORMACE ZZUM',h:L('INFORMACE ZZUM/Forms/AllItems.aspx'),i:'file'}
+];
+const PHONES = [
+ {k:'CB',n:'České Budějovice',h:L('Lists/Telefonn seznam CB/Umstn.aspx')},
+ {k:'JH',n:'Jindřichův Hradec',h:L('Lists/Telefonn seznam JH/AllItems.aspx')},
+ {k:'PI',n:'Písek',h:L('Lists/Telefonn seznam PI/AllItems.aspx')},
+ {k:'PT',n:'Prachatice',h:L('Lists/Telefonn seznam PT/AllItems.aspx')},
+ {k:'ST',n:'Strakonice',h:L('Lists/Telefonn seznam ST/AllItems.aspx')},
+ {k:'TA',n:'Tábor',h:L('Lists/Telefonn seznam TA/AllItems.aspx')},
+ {k:'ČK',n:'Český Krumlov',h:L('Lists/Telefonn seznam K/AllItems.aspx')}
+];
+const LINKS = [
+ {t:'Webmail',d:'Firemní e-mail',h:'https://mail.zzsjck.cz/',i:'mail'},
+ {t:'Dokumentace ZZS',d:'Systém dokumentace',h:'https://dokumentace.zzsjck.local/',i:'file'},
+ {t:'HelpDesk',d:'Hlášení požadavků na IT',h:'http://helpdesk/servlet/HelpdeskOverview?eid=ITHelpdesk&lang=cs&archive=0',i:'help'},
+ {t:'Uzavírky',d:'Dopravní info dnes',h:'http://www.dopravniinfodnes.cz/typ-dopravni-uzavirky-a-omezeni/',i:'road'},
+ {t:'Krizové řízení',d:'Web krizového řízení',h:BASE+'/krizoverizeni/default.aspx',i:'alert'},
+ {t:'Odbory',d:'Web odborové organizace',h:BASE+'/odbory/default.aspx',i:'users'}
+];
+const SECTIONS = {
+ predpisy:{t:'Vnitřní předpisy ZZS JčK',h:BASE+'/dokumenty/default.aspx',i:'book',d:'Směrnice, příkazy a řády organizace.'},
+ 'krizove-rizeni':{t:'Krizové řízení',h:BASE+'/krizoverizeni/default.aspx',i:'alert',d:'Plány a postupy krizového řízení.'},
+ odbory:{t:'Odbory',h:BASE+'/odbory/default.aspx',i:'users',d:'Informace odborové organizace.'},
+ 'vycvikove-stredisko':{t:'Výcvikové středisko',h:BASE+'/vycvikove_stredisko/default.aspx',i:'cap',d:'Kurzy, termíny a výcvik.'}
+};
+const NAV = [
+ ['domu','Domů','home'],['oznameni','Oznámení','bell'],['dokumenty','Dokumenty','file'],['kalendar','Kalendář','cal'],['telefony','Telefonní seznamy','phone'],['odkazy','Weby a systémy','globe'],
+ ['--','Sekce'],
+ ['predpisy','Vnitřní předpisy','book'],['krizove-rizeni','Krizové řízení','alert'],['odbory','Odbory','users'],['vycvikove-stredisko','Výcvikové středisko','cap']
+];
+
+/* ---------- pomocné ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const fmtDate = (iso, t=true) => { const d = new Date(iso); return d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric',year:'numeric'}) + (t ? ' · ' + d.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'}) : ''); };
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('zzs.'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('zzs.'+k, JSON.stringify(v)); }catch(e){} }
+};
+const ext = h => `href="${esc(h)}" target="_blank" rel="noopener"`;
+const fileIcon = t => t === 'folder' ? `<span class="fi folder">${svg('folder')}</span>` : `<span class="fi ${t}">${t.toUpperCase()}</span>`;
+
+/* ---------- navigace ---------- */
+function renderNav(cur){
+  $('#nav').innerHTML = NAV.map(n => n[0]==='--' ? `<div class="nav-h">${n[1]}</div>`
+    : `<a href="#${n[0]}" ${n[0]===cur?'aria-current="page"':''}>${svg(n[2])}${n[1]}</a>`).join('');
+}
+
+/* ---------- pohledy ---------- */
+function newsItem(n, full){
+  const short = n.text.length > 260 && !full;
+  return `<article class="item">
+    <div class="item-t"><div><h3>${esc(n.title)}</h3>
+      <div class="meta"><span>${esc(n.author)}</span><span>${fmtDate(n.date)}</span><span class="pill ${n.warn?'warn':''}">${esc(n.tag)}</span>
+      ${n.attach?`<span class="pill">${svg('clip')}Příloha</span>`:''}</div></div></div>
+    <p>${esc(short ? n.text.slice(0,260)+'…' : n.text)}</p>
+    <div class="row"><a class="tgl" ${ext(n.href)}>${n.trunc||n.attach?'Číst celé a otevřít přílohy':'Otevřít v intranetu'}</a></div>
+  </article>`;
+}
+function evItem(e){
+  const d = new Date(e.date + 'T00:00');
+  return `<div class="ev"><div class="date"><b>${d.getDate()}</b><span>${d.toLocaleDateString('cs-CZ',{month:'short'})}</span></div>
+    <div><h3>${e.href?`<a ${ext(e.href)}>${esc(e.title)}</a>`:esc(e.title)}</h3>${e.text?`<p>${esc(e.text)}</p>`:''}</div></div>`;
+}
+function docRows(list){
+  return list.map(d => `<tr><td><div class="nm">${fileIcon(d.type)}<a ${ext(d.href)}>${esc(d.title)}</a></div></td><td>${esc(d.by)}</td></tr>`).join('');
+}
+
+function vHome(){
+  const today = new Date().toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const quick = [
+    ['#oznameni','Oznámení','Aktuality a pokyny','bell',0],['#dokumenty','Dokumenty','Předpisy, návody, GDPR','file',0],
+    ['#kalendar','Kalendář','Události a dovolené','cal',0],['#telefony','Telefonní seznamy','Všechny základny','phone',0],
+    [LINKS[0].h,'Webmail','Firemní e-mail','mail',1],[LINKS[2].h,'HelpDesk','Hlášení na IT','help',1]
+  ];
+  return `<div class="hero"><div><h1>Dobrý den</h1><p>${today.charAt(0).toUpperCase()+today.slice(1)}</p></div></div>
+  <div class="tiles" style="margin-bottom:20px">${quick.map(q=>`<a class="tile ${q[4]?'ext':''}" ${q[4]?ext(q[0]):`href="${q[0]}"`}><span class="ico">${svg(q[3])}</span><b>${q[1]}</b><small>${q[2]}</small></a>`).join('')}</div>
+  <div class="grid g-home">
+    <div class="col">
+      <section class="card"><div class="card-h"><h2>Oznámení</h2><a class="more" href="#oznameni">Všechna oznámení</a></div>
+        <div class="card-b news">${NEWS.slice(0,3).map(n=>newsItem(n)).join('')}</div></section>
+      <section class="card"><div class="card-h"><h2>Sdílené dokumenty</h2><a class="more" href="#dokumenty">Zobrazit vše</a></div>
+        <div class="card-b tw"><table><thead><tr><th>Název</th><th>Změnil</th></tr></thead><tbody>${docRows(DOCS.slice(0,8))}</tbody></table></div></section>
+    </div>
+    <div class="col">
+      <section class="card"><div class="card-h"><h2>Kalendář</h2><a class="more" href="#kalendar">Otevřít</a></div>
+        <div class="card-b">${allEvents().slice(-4).reverse().map(evItem).join('')}</div></section>
+      <section class="card"><div class="card-h"><h2>Dokumentové knihovny</h2></div>
+        <div class="card-b"><div class="lib" style="grid-template-columns:1fr">${LIBS.slice(0,6).map(l=>`<a ${ext(l.h)}><span class="fi" style="background:var(--brand-soft);color:var(--brand)">${svg(l.i)}</span>${esc(l.t)}</a>`).join('')}</div></div></section>
+      <section class="card"><div class="card-h"><h2>Weby a systémy</h2><a class="more" href="#odkazy">Všechny</a></div>
+        <div class="card-b"><div class="lib" style="grid-template-columns:1fr">${LINKS.slice(0,4).map(l=>`<a ${ext(l.h)}><span class="fi" style="background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)">${svg(l.i)}</span><span>${l.t}<br><small style="color:var(--muted);font-weight:400">${l.d}</small></span></a>`).join('')}</div></div></section>
+    </div>
+  </div>`;
+}
+
+function vNews(){
+  return `<div class="hero"><div><h1>Oznámení</h1><p>Aktuální pokyny a informace pro zaměstnance.</p></div></div>
+  <div class="bar"><input class="field" id="nq" type="search" placeholder="Filtrovat oznámení" aria-label="Filtrovat oznámení" style="flex:1;max-width:380px"><a class="btn sec" ${ext(BASE+'/Lists/Oznmen/AllItems.aspx')}>Starší oznámení v intranetu</a></div>
+  <section class="card"><div class="card-b news" id="nlist"></div></section>`;
+}
+function bindNews(){
+  const draw = () => { const q = norm($('#nq').value);
+    const r = NEWS.filter(n => norm(n.title+n.text+n.author+n.tag).includes(q));
+    $('#nlist').innerHTML = r.length ? r.map(n=>newsItem(n,true)).join('') : `<div class="empty"><b>Nic nenalezeno</b>Zkuste jiný výraz.</div>`; };
+  $('#nq').addEventListener('input', draw); draw();
+}
+
+let docState = {q:'',t:'all'};
+function vDocs(){
+  return `<div class="hero"><div><h1>Dokumenty</h1><p>Knihovny dokumentů a sdílené soubory organizace.</p></div></div>
+  <h2 style="font-size:1.05rem;margin-bottom:12px">Knihovny</h2>
+  <div class="lib" style="margin-bottom:28px">${LIBS.map(l=>`<a ${ext(l.h)}><span class="fi" style="background:var(--brand-soft);color:var(--brand)">${svg(l.i)}</span>${esc(l.t)}</a>`).join('')}</div>
+  <h2 style="font-size:1.05rem;margin-bottom:12px">Sdílené dokumenty</h2>
+  <div class="bar"><input class="field" id="dq" type="search" placeholder="Hledat v dokumentech" aria-label="Hledat v dokumentech" style="flex:1;max-width:380px" value="${esc(docState.q)}">
+    <div class="chips" role="group" aria-label="Typ">${[['all','Vše'],['folder','Složky'],['xlsx','Excel'],['docx','Word'],['pdf','PDF']].map(c=>`<button class="chip" data-t="${c[0]}" aria-pressed="${docState.t===c[0]}">${c[1]}</button>`).join('')}</div></div>
+  <section class="card"><div class="card-b tw"><table><thead><tr><th>Název</th><th>Změnil</th></tr></thead><tbody id="dbody"></tbody></table></div></section>
+  <p style="margin-top:12px"><a class="more" ${ext(BASE+'/Sdlen%20dokumenty/Forms/AllItems.aspx')}>Další položky v původní knihovně</a></p>`;
+}
+function bindDocs(){
+  const draw = () => { const q = norm(docState.q);
+    const r = DOCS.filter(d => (docState.t==='all'||d.type===docState.t) && norm(d.title+d.by).includes(q));
+    $('#dbody').innerHTML = r.length ? docRows(r) : `<tr><td colspan="2"><div class="empty"><b>Nic nenalezeno</b>Změňte filtr nebo hledaný výraz.</div></td></tr>`; };
+  $('#dq').addEventListener('input', e => { docState.q = e.target.value; draw(); });
+  document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+    docState.t = b.dataset.t; document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x===b)); draw(); }));
+  draw();
+}
+
+/* kalendář */
+let calRef = new Date(2026, 10, 1);
+const allEvents = () => [...EVENTS.map(e=>({...e})), ...store.get('events',[]).map(e=>({...e,local:true}))].sort((a,b)=>a.date.localeCompare(b.date));
+function vCal(){
+  return `<div class="hero"><div><h1>Kalendář</h1><p>Dovolené, školení a události organizace.</p></div><a class="btn sec" ${ext(BASE+'/Lists/Kalend/calendar.aspx')}>Původní kalendář</a></div>
+  <div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr);align-items:start" id="calgrid">
+    <section class="card"><div class="card-b"><div class="cal-h"><h2 id="calT"></h2>
+      <button class="ib" id="cp" aria-label="Předchozí měsíc">‹</button><button class="ib" id="cn" aria-label="Další měsíc">›</button><button class="ib" id="ct">Dnes</button></div>
+      <div class="cal" id="calG" role="grid"></div></div></section>
+    <section class="card"><div class="card-h"><h2>Nová událost</h2></div><div class="card-b">
+      <form id="ef" style="display:grid;gap:10px"><label for="ed">Datum</label><input class="field" id="ed" type="date" required>
+        <label for="et">Název</label><input class="field" id="et" required maxlength="80">
+        <label for="ex">Poznámka</label><input class="field" id="ex" maxlength="160">
+        <button class="btn" type="submit">Přidat do kalendáře</button>
+        <small style="color:var(--muted)">Událost se uloží jen v tomto prohlížeči. Sdílený kalendář pro všechny vyžaduje napojení na server.</small></form>
+      <h3 style="font-size:.95rem;margin:18px 0 4px">Události</h3><div id="evl"></div></div></section>
+  </div>`;
+}
+function bindCal(){
+  const draw = () => {
+    const y = calRef.getFullYear(), m = calRef.getMonth();
+    $('#calT').textContent = calRef.toLocaleDateString('cs-CZ',{month:'long',year:'numeric'});
+    const first = new Date(y,m,1), off = (first.getDay()+6)%7, start = new Date(y,m,1-off);
+    const ev = allEvents(), todayS = new Date().toDateString();
+    let h = ['Po','Út','St','Čt','Pá','So','Ne'].map(d=>`<div class="dh">${d}</div>`).join('');
+    for(let i=0;i<42;i++){ const d = new Date(start); d.setDate(start.getDate()+i);
+      const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      h += `<div class="d ${d.getMonth()!==m?'o':''} ${d.toDateString()===todayS?'t':''}"><span class="n">${d.getDate()}</span>${ev.filter(e=>e.date===iso).map(e=>`<button class="e ${e.local?'l':''}" title="${esc(e.title)}" data-d="${iso}">${esc(e.title)}</button>`).join('')}</div>`;
+      if(i===34 && new Date(start.getFullYear(),start.getMonth(),start.getDate()+35).getMonth()!==m) break; }
+    $('#calG').innerHTML = h;
+    $('#evl').innerHTML = ev.filter(e=>{const d=new Date(e.date+'T00:00');return d.getMonth()===m&&d.getFullYear()===y;}).map(e=>evItem(e)+(e.local?`<button class="tgl" data-del="${e.id||e.date+e.title}" style="margin:-6px 0 8px 66px">Smazat</button>`:'')).join('') || `<div class="empty">Žádné události v tomto měsíci.</div>`;
+    document.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{ store.set('events', store.get('events',[]).filter(e=>(e.id||e.date+e.title)!==b.dataset.del)); draw(); }));
+  };
+  $('#cp').onclick = () => { calRef = new Date(calRef.getFullYear(), calRef.getMonth()-1, 1); draw(); };
+  $('#cn').onclick = () => { calRef = new Date(calRef.getFullYear(), calRef.getMonth()+1, 1); draw(); };
+  $('#ct').onclick = () => { const n = new Date(); calRef = new Date(n.getFullYear(), n.getMonth(), 1); draw(); };
+  $('#ed').value = new Date().toISOString().slice(0,10);
+  $('#ef').addEventListener('submit', e => { e.preventDefault();
+    const list = store.get('events',[]); list.push({id:'l'+Date.now(),date:$('#ed').value,title:$('#et').value.trim(),text:$('#ex').value.trim()});
+    store.set('events',list); $('#et').value=''; $('#ex').value=''; draw(); });
+  if(matchMedia('(max-width:860px)').matches) $('#calgrid').style.gridTemplateColumns='1fr';
+  draw();
+}
+
+/* telefonní seznamy */
+let phTab = 'CB';
+function parseTable(txt){
+  const lines = txt.replace(/\r/g,'').split('\n').filter(l=>l.trim()); if(!lines.length) return null;
+  const sep = ['\t',';',','].map(s=>[s,lines[0].split(s).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows = lines.map(l=>l.split(sep).map(c=>c.trim().replace(/^"|"$/g,'')));
+  return {head:rows[0], rows:rows.slice(1)};
+}
+function vPhones(){
+  return `<div class="hero"><div><h1>Telefonní seznamy</h1><p>Kontakty podle výjezdových základen a ředitelství.</p></div></div>
+  <div class="bar"><div class="chips" role="tablist" aria-label="Základna">${PHONES.map(p=>`<button class="chip" role="tab" data-k="${p.k}" aria-pressed="${p.k===phTab}">${p.k}</button>`).join('')}</div>
+    <input class="field" id="pq" type="search" placeholder="Hledat jméno nebo číslo" aria-label="Hledat v kontaktech" style="flex:1;min-width:200px;max-width:340px"></div>
+  <section class="card"><div class="card-h"><h2 id="pt"></h2><a class="more" id="pl" target="_blank" rel="noopener"></a></div><div class="card-b" id="pb"></div></section>`;
+}
+function bindPhones(){
+  const draw = () => {
+    const p = PHONES.find(x=>x.k===phTab), d = store.get('ph.'+phTab,null), q = norm($('#pq').value);
+    $('#pt').textContent = p.n; $('#pl').href = p.h; $('#pl').textContent = 'Původní seznam';
+    document.querySelectorAll('[data-k]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===phTab));
+    if(!d){ $('#pb').innerHTML = importBox(true); } else {
+      const rows = d.rows.filter(r=>norm(r.join(' ')).includes(q));
+      $('#pb').innerHTML = `<div class="tw"><table><thead><tr>${d.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${d.head.map((_,i)=>`<td>${/^[+\d][\d\s]{5,}$/.test(r[i]||'')?`<a href="tel:${esc((r[i]||'').replace(/\s/g,''))}">${esc(r[i])}</a>`:esc(r[i]||'')}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="9"><div class="empty"><b>Nic nenalezeno</b></div></td></tr>`}</tbody></table></div>
+        <p style="margin:14px 0 0;display:flex;gap:12px;flex-wrap:wrap"><span style="color:var(--muted);font-size:.85rem">${d.rows.length} kontaktů, uloženo v tomto prohlížeči.</span><button class="tgl" id="pre">Nahrát znovu</button><button class="tgl" id="pdel">Odstranit data</button></p>`;
+      $('#pre')?.addEventListener('click',()=>{ $('#pb').innerHTML = importBox(false); wire(); });
+      $('#pdel')?.addEventListener('click',()=>{ store.set('ph.'+phTab,null); draw(); });
+    }
+    wire();
+  };
+  const importBox = first => `${first?`<div class="note" style="margin-bottom:14px">${svg('warn')}<div>Data tohoto seznamu nebyla součástí exportu. Vložte kontakty z Excelu (první řádek jsou názvy sloupců) nebo nahrajte CSV.</div></div>`:''}
+    <label for="pi" style="font-weight:600;font-size:.9rem">Vložit tabulku</label>
+    <textarea class="field" id="pi" placeholder="Jméno&#9;Funkce&#9;Telefon&#10;…"></textarea>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center"><button class="btn" id="pgo">Načíst kontakty</button>
+    <label class="btn sec" for="pf" style="cursor:pointer">Nahrát CSV<input id="pf" type="file" accept=".csv,.txt,.tsv" hidden></label></div>`;
+  function wire(){
+    const go = txt => { const t = parseTable(txt); if(!t||!t.rows.length){ alert; return; } store.set('ph.'+phTab,t); draw(); };
+    $('#pgo')?.addEventListener('click',()=>go($('#pi').value));
+    $('#pf')?.addEventListener('change',e=>{ const f=e.target.files[0]; if(f) f.text().then(go); });
+  }
+  document.querySelectorAll('[data-k]').forEach(b=>b.addEventListener('click',()=>{ phTab=b.dataset.k; draw(); }));
+  $('#pq').addEventListener('input',draw); draw();
+}
+
+function vLinks(){
+  return `<div class="hero"><div><h1>Weby a systémy</h1><p>Rychlý přístup k provozním systémům a webům organizace.</p></div></div>
+  <div class="tiles">${LINKS.map(l=>`<a class="tile ext" ${ext(l.h)}><span class="ico">${svg(l.i)}</span><b>${l.t}</b><small>${l.d}</small></a>`).join('')}</div>`;
+}
+function vSection(k){
+  const s = SECTIONS[k];
+  return `<div class="hero"><div><div class="crumb"><a href="#domu">Domů</a> / ${esc(s.t)}</div><h1>${esc(s.t)}</h1><p>${esc(s.d)}</p></div></div>
+  <section class="card"><div class="card-b" style="padding:24px"><div class="note" style="margin-bottom:18px">${svg('warn')}<div>Obsah této sekce nebyl součástí exportu intranetu. Až bude dostupný, doplní se sem. Do té doby otevře původní stránka aktuální obsah.</div></div>
+    <a class="btn" ${ext(s.h)}>Otevřít v původním intranetu ${svg('ext','style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"')}</a></div></section>`;
+}
+
+/* ---------- router ---------- */
+const VIEWS = {domu:[vHome], oznameni:[vNews,bindNews], dokumenty:[vDocs,bindDocs], kalendar:[vCal,bindCal], telefony:[vPhones,bindPhones], odkazy:[vLinks]};
+function route(){
+  const k = (location.hash||'#domu').slice(1);
+  const v = VIEWS[k] || (SECTIONS[k] ? [()=>vSection(k)] : VIEWS.domu);
+  const cur = VIEWS[k]||SECTIONS[k] ? k : 'domu';
+  renderNav(cur); $('#view').innerHTML = v[0](); v[1] && v[1]();
+  const t = (NAV.find(n=>n[0]===cur)||[0,'Domů'])[1]; document.title = (cur==='domu'?'':t+' · ')+'Intranet ZZS JčK';
+  closeMenu(); window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', route);
+
+/* ---------- menu, motiv, usnadnění ---------- */
+function closeMenu(){ $('#side').classList.remove('open'); $('#scrim').classList.remove('on'); $('#burger').setAttribute('aria-expanded','false'); }
+$('#burger').onclick = () => { const o = $('#side').classList.toggle('open'); $('#scrim').classList.toggle('on',o); $('#burger').setAttribute('aria-expanded',o); };
+$('#scrim').onclick = closeMenu;
+const root = document.documentElement;
+const th = store.get('theme',null); if(th) root.dataset.theme = th;
+$('#theme').onclick = () => { const dark = root.dataset.theme ? root.dataset.theme==='dark' : matchMedia('(prefers-color-scheme:dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark'; store.set('theme', root.dataset.theme); };
+const setA = on => { if(on) root.dataset.a11y='on'; else delete root.dataset.a11y; $('#a11y').setAttribute('aria-pressed', on); store.set('a11y',on); };
+setA(store.get('a11y',false)); $('#a11y').onclick = () => setA(root.dataset.a11y!=='on');
+
+/* ---------- vyhledávání (Ctrl+K) ---------- */
+function buildIndex(){
+  const idx = [];
+  NAV.filter(n=>n[0]!=='--').forEach(n=>idx.push({g:'Stránky',t:n[1],h:'#'+n[0],i:n[2]}));
+  NEWS.forEach(n=>idx.push({g:'Oznámení',t:n.title,x:n.text,h:n.href,e:1,s:fmtDate(n.date,false),i:'bell'}));
+  DOCS.forEach(d=>idx.push({g:'Dokumenty',t:d.title,h:d.href,e:1,s:d.by,i:'file'}));
+  LIBS.forEach(l=>idx.push({g:'Knihovny',t:l.t,h:l.h,e:1,i:l.i}));
+  LINKS.forEach(l=>idx.push({g:'Weby a systémy',t:l.t,x:l.d,h:l.h,e:1,i:l.i}));
+  PHONES.forEach(p=>{ idx.push({g:'Telefonní seznamy',t:'Telefonní seznam '+p.k+' '+p.n,h:'#telefony',i:'phone'});
+    const d = store.get('ph.'+p.k,null); if(d) d.rows.forEach(r=>idx.push({g:'Kontakty',t:r.slice(0,2).join(', '),x:r.join(' '),h:'#telefony',s:p.k,i:'person'})); });
+  allEvents().forEach(e=>idx.push({g:'Kalendář',t:e.title,x:e.text,h:'#kalendar',i:'cal'}));
+  return idx;
+}
+let sel = 0;
+function drawPal(){
+  const q = norm($('#palIn').value.trim()), all = buildIndex();
+  const r = (q ? all.filter(x=>q.split(/\s+/).every(w=>norm(x.t+' '+(x.x||'')).includes(w))) : all.filter(x=>x.g==='Stránky')).slice(0,40);
+  let g = '', h = '';
+  r.forEach((x,i)=>{ if(x.g!==g){ g=x.g; h+=`<li class="grp">${g}</li>`; }
+    h += `<li><a href="${esc(x.h)}" ${x.e?'target="_blank" rel="noopener"':''} data-i="${i}">${svg(x.i||'file','style="width:18px;height:18px;stroke:var(--brand);fill:none;stroke-width:1.9;flex:none"')}<span>${esc(x.t)}</span>${x.s?`<small>${esc(x.s)}</small>`:''}</a></li>`; });
+  $('#palList').innerHTML = h || '<li><div class="empty"><b>Nic nenalezeno</b>Zkuste kratší výraz.</div></li>';
+  sel = 0; mark();
+}
+const items = () => [...document.querySelectorAll('#palList a')];
+function mark(){ items().forEach((a,i)=>a.classList.toggle('sel',i===sel)); items()[sel]?.scrollIntoView({block:'nearest'}); }
+const openPal = () => { $('#palBg').classList.add('on'); $('#palIn').value=''; drawPal(); $('#palIn').focus(); };
+const closePal = () => $('#palBg').classList.remove('on');
+$('#openSearch').onclick = openPal;
+$('#palBg').addEventListener('click', e => { if(e.target.id==='palBg') closePal(); });
+$('#palList').addEventListener('click', e => { if(e.target.closest('a')) closePal(); });
+$('#palIn').addEventListener('input', drawPal);
+$('#palIn').addEventListener('keydown', e => {
+  if(e.key==='ArrowDown'){ e.preventDefault(); sel=Math.min(sel+1,items().length-1); mark(); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); sel=Math.max(sel-1,0); mark(); }
+  else if(e.key==='Enter'){ e.preventDefault(); items()[sel]?.click(); }
+});
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openPal(); }
+  else if(e.key==='Escape') closePal();
+  else if(e.key==='/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); openPal(); }
+});
+
+route();
+</script>
+</body>
+</html>
